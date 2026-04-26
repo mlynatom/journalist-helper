@@ -1,4 +1,5 @@
 """Main entry point for the journalist helper application."""
+from cmath import e
 from urllib3.connection import log
 import logging
 import os
@@ -67,18 +68,17 @@ def main():
     if len(relevant_incidents) == 0:
         triage_result = "Žádné relevantní incidenty nenalezeny."
         logger.info("Žádné relevantní incidenty nenalezeny, triage přeskočen.")
-        
+    else:
+        # Perform triage using the LLM
+        try:
+            triage_result = perform_triage(relevant_incidents)
+            logger.info("Triage completed successfully.")
 
-    # Perform triage using the LLM
-    try:
-        triage_result = perform_triage(relevant_incidents)
-        logger.info("Triage completed successfully.")
-        
-    except RuntimeError as exc:
-        logger.error("Triage failed: %s", exc)
+        except RuntimeError as exc:
+            logger.error("Triage failed: %s", exc)
+
 
     save_triage_result(triage_result)
-
     logger.info("Odesílám triage výsledek do Telegramu...")
     send_telegram_alert(triage_result)
     logger.info("Triage výsledek odeslán do Telegramu.")
