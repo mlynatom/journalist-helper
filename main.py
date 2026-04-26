@@ -1,12 +1,14 @@
 """Main entry point for the journalist helper application."""
-from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES
-from src.schemas import Incident, Source
-from src.rss_parser import parse_rss_feed
-from src.triage import perform_triage
-
+from urllib3.connection import log
 import logging
 import os
 from pathlib import Path
+
+from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES
+from src.rss_parser import parse_rss_feed
+from src.schemas import Incident, Source
+from src.telegram import send_telegram_alert
+from src.triage import perform_triage
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -63,18 +65,26 @@ def main():
         logger.debug("%s", incident)
 
     if len(relevant_incidents) == 0:
+        triage_result = "Žádné relevantní incidenty nenalezeny."
         logger.info("Žádné relevantní incidenty nenalezeny, triage přeskočen.")
-        save_triage_result("Žádné relevantní incidenty nenalezeny.")
-        return "Žádné relevantní incidenty nenalezeny."
+        
 
     # Perform triage using the LLM
     try:
         triage_result = perform_triage(relevant_incidents)
-        save_triage_result(triage_result)
         logger.info("Triage completed successfully.")
-        return triage_result
+        
     except RuntimeError as exc:
         logger.error("Triage failed: %s", exc)
+
+    save_triage_result(triage_result)
+
+    logger.info("Odesílám triage výsledek do Telegramu...")
+    send_telegram_alert(triage_result)
+    logger.info("Triage výsledek odeslán do Telegramu.")
+
+    return triage_result
+    
 
 if __name__ == "__main__":
     result = main()
