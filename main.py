@@ -62,6 +62,11 @@ def main():
     for incident in relevant_incidents:
         logger.debug("%s", incident)
 
+    if len(relevant_incidents) == 0:
+        logger.info("Žádné relevantní incidenty nenalezeny, triage přeskočen.")
+        save_triage_result("Žádné relevantní incidenty nenalezeny.")
+        return "Žádné relevantní incidenty nenalezeny."
+
     # Perform triage using the LLM
     try:
         triage_result = perform_triage(relevant_incidents)
