@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Test Worker via Curl
+        run: |
+          curl -L -v -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)" https://proud-union-e70d.tom-mlynar1.workers.dev/
       - name: Checkout repository
         uses: actions/checkout@v4
 
