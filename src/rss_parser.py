@@ -5,6 +5,7 @@ from email.utils import parsedate_to_datetime
 from contextlib import contextmanager
 import errno
 import socket
+import time
 
 import logging
 
@@ -18,6 +19,8 @@ from src.schemas import Incident, Source
 logger = logging.getLogger(__name__)
 
 USER_AGENT = "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)"
+MAX_FETCH_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = 2
 
 
 @contextmanager
@@ -48,7 +51,7 @@ def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
             "User-Agent": USER_AGENT,
             "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
         },
-        "timeout": 30,
+        "timeout": (10, 30),
     }
 
     def _do_request(force_ipv4: bool = False) -> requests.Response:
@@ -57,23 +60,37 @@ def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
                 return requests.get(feed_source.url, **request_kwargs)
         return requests.get(feed_source.url, **request_kwargs)
 
-    try:
-        response = _do_request()
-    except requests.RequestException as exc:
-        if has_errno(exc, errno.ENETUNREACH):
-            logger.warning(
-                "RSS feed %s failed over the default route with ENETUNREACH; retrying via IPv4",
-                feed_source.url,
-            )
-            try:
-                response = _do_request(force_ipv4=True)
-            except requests.RequestException as retry_exc:
-                raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {retry_exc}") from retry_exc
-        else:
-            raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {exc}") from exc
+    force_ipv4 = False
+    last_error: requests.RequestException | None = None
 
-    response.raise_for_status()
-    return response.content, response.status_code, response.headers.get("Content-Type")
+    for attempt in range(1, MAX_FETCH_ATTEMPTS + 1):
+        try:
+            response = _do_request(force_ipv4=force_ipv4)
+            response.raise_for_status()
+            return response.content, response.status_code, response.headers.get("Content-Type")
+        except requests.RequestException as exc:
+            last_error = exc
+
+            if has_errno(exc, errno.ENETUNREACH) and not force_ipv4:
+                logger.warning(
+                    "RSS feed %s failed over the default route with ENETUNREACH; retrying via IPv4",
+                    feed_source.url,
+                )
+                force_ipv4 = True
+            elif attempt < MAX_FETCH_ATTEMPTS:
+                logger.warning(
+                    "RSS feed %s request attempt %d/%d failed: %s; retrying in %ds",
+                    feed_source.url,
+                    attempt,
+                    MAX_FETCH_ATTEMPTS,
+                    exc,
+                    RETRY_BACKOFF_SECONDS,
+                )
+
+            if attempt < MAX_FETCH_ATTEMPTS:
+                time.sleep(RETRY_BACKOFF_SECONDS)
+
+    raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {last_error}") from last_error
 
 
 def parse_pubdate(value: str | None) -> datetime | None:
