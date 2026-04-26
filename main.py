@@ -80,8 +80,11 @@ def main():
 
     save_triage_result(triage_result)
     logger.info("Odesílám triage výsledek do Telegramu...")
-    send_telegram_alert(triage_result)
-    logger.info("Triage výsledek odeslán do Telegramu.")
+    try:
+        send_telegram_alert(triage_result)
+        logger.info("Triage výsledek odeslán do Telegramu.")
+    except Exception as exc:
+        logger.error("Failed to send Telegram alert: %s", exc)
 
     return triage_result
     

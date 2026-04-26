@@ -19,5 +19,6 @@ def send_telegram_alert(message):
         "parse_mode": "HTML",  # Allows <b>bold</b>, <i>italic</i>, etc.
     }
 
-    response = requests.post(url, json=payload)
+    response = requests.post(url, json=payload, timeout=10)
+    response.raise_for_status()  # Raise an error for bad responses
     return response.json()
