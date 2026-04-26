@@ -2,12 +2,11 @@
 
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-from urllib.error import URLError
-from urllib.request import Request, urlopen
 
 import logging
 
 import feedparser
+import requests
 
 from src.schemas import Incident, Source
 
@@ -19,20 +18,18 @@ USER_AGENT = "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.co
 
 def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
     """Fetch a feed with explicit headers so failures are easier to diagnose."""
-    request = Request(
-        feed_source.url,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
-        },
-    )
-
     try:
-        with urlopen(request, timeout=30) as response:
-            status = getattr(response, "status", None)
-            content_type = response.headers.get("Content-Type")
-            return response.read(), status, content_type
-    except URLError as exc:
+        response = requests.get(
+            feed_source.url,
+            headers={
+                "User-Agent": USER_AGENT,
+                "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.content, response.status_code, response.headers.get("Content-Type")
+    except requests.RequestException as exc:
         raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {exc}") from exc
 
 
