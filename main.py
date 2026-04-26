@@ -5,9 +5,17 @@ from src.rss_parser import parse_rss_feed
 from src.triage import perform_triage
 
 import logging
+import os
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+
+def save_triage_result(triage_result: str) -> None:
+    """Persist triage output for downstream automation consumers."""
+    output_path = Path(os.getenv("TRIAGE_OUTPUT_FILE", "triage_result.txt"))
+    output_path.write_text(triage_result, encoding="utf-8")
 
 
 def extract_incidents() -> list[Incident]:
@@ -57,6 +65,7 @@ def main():
     # Perform triage using the LLM
     try:
         triage_result = perform_triage(relevant_incidents)
+        save_triage_result(triage_result)
         logger.info("Triage completed successfully.")
         return triage_result
     except RuntimeError as exc:
