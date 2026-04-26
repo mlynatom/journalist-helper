@@ -11,7 +11,7 @@ SOURCES: list[Source] = [
     ),
     Source(
         name="Zásahy JPO",
-        url="https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/feed.xml"
+        url="https://proud-union-e70d.tom-mlynar1.workers.dev/" #https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/feed.xml
     ),
     Source(
         name="PID - mimorádnosti",
