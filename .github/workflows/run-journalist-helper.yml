@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Network check
+        run: curl -v https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/feed.xml
       - name: Checkout repository
         uses: actions/checkout@v4
 
