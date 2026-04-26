@@ -35,6 +35,8 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           TRIAGE_OUTPUT_FILE: triage_result.txt
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          USER_ID: ${{ secrets.USER_ID }}
         shell: bash
         run: |
           uv run python main.py
