@@ -2,11 +2,15 @@
 
 from datetime import datetime
 from email.utils import parsedate_to_datetime
+from contextlib import contextmanager
+import errno
+import socket
 
 import logging
 
 import feedparser
 import requests
+from urllib3.util import connection as urllib3_connection
 
 from src.schemas import Incident, Source
 
@@ -16,21 +20,60 @@ logger = logging.getLogger(__name__)
 USER_AGENT = "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)"
 
 
+@contextmanager
+def prefer_ipv4_connections():
+    """Temporarily force requests/urllib3 to resolve only IPv4 addresses."""
+    original_allowed_gai_family = urllib3_connection.allowed_gai_family
+    urllib3_connection.allowed_gai_family = lambda: socket.AF_INET
+    try:
+        yield
+    finally:
+        urllib3_connection.allowed_gai_family = original_allowed_gai_family
+
+
+def has_errno(exc: BaseException, code: int) -> bool:
+    """Check whether an exception chain contains a specific errno."""
+    current: BaseException | None = exc
+    while current is not None:
+        if isinstance(current, OSError) and current.errno == code:
+            return True
+        current = current.__cause__ or current.__context__
+    return False
+
+
 def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
     """Fetch a feed with explicit headers so failures are easier to diagnose."""
+    request_kwargs = {
+        "headers": {
+            "User-Agent": USER_AGENT,
+            "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+        },
+        "timeout": 30,
+    }
+
+    def _do_request(force_ipv4: bool = False) -> requests.Response:
+        if force_ipv4:
+            with prefer_ipv4_connections():
+                return requests.get(feed_source.url, **request_kwargs)
+        return requests.get(feed_source.url, **request_kwargs)
+
     try:
-        response = requests.get(
-            feed_source.url,
-            headers={
-                "User-Agent": USER_AGENT,
-                "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
-            },
-            timeout=30,
-        )
-        response.raise_for_status()
-        return response.content, response.status_code, response.headers.get("Content-Type")
+        response = _do_request()
     except requests.RequestException as exc:
-        raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {exc}") from exc
+        if has_errno(exc, errno.ENETUNREACH):
+            logger.warning(
+                "RSS feed %s failed over the default route with ENETUNREACH; retrying via IPv4",
+                feed_source.url,
+            )
+            try:
+                response = _do_request(force_ipv4=True)
+            except requests.RequestException as retry_exc:
+                raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {retry_exc}") from retry_exc
+        else:
+            raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {exc}") from exc
+
+    response.raise_for_status()
+    return response.content, response.status_code, response.headers.get("Content-Type")
 
 
 def parse_pubdate(value: str | None) -> datetime | None:
