@@ -18,13 +18,13 @@ def parse_pubdate(value: str | None) -> datetime | None:
         return None
     try:
         return parsedate_to_datetime(value)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         return None
 
 
 def parse_rss_feed(source: Source) -> list[Incident]:
     """Parse an RSS feed and return a list of entries."""
-    feed: dict = feedparser.parse(source.url)
+    feed: dict = feedparser.parse(source.url, agent="Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)")
 
     entries = feed.get("entries", [])
     incidents = []
