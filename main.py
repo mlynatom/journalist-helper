@@ -1,38 +1,68 @@
-from openrouter import OpenRouter
-import os
-import dotenv
+"""Main entry point for the journalist helper application."""
+from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES
+from src.schemas import Incident, Source
+from src.rss_parser import parse_rss_feed
+from src.triage import perform_triage
 
-dotenv.load_dotenv()
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+
+
+def extract_incidents() -> list[Incident]:
+    """Extract incidents from all configured sources."""
+    incidents: list[Incident] = []
+    for source in SOURCES:
+        logger.info("Načítám zdroj: %s (%s)", source.name, source.url)
+        try:
+            source_incidents = parse_rss_feed(source)
+            logger.info(" - Načteno %d incidentů.", len(source_incidents))
+            incidents.extend(source_incidents)
+        except Exception as exc:
+            logger.error(" - Chyba při načítání zdroje: %s", exc)
+    return incidents
+
+
+def is_related(incident: Incident, keywords: list[str]) -> bool:
+    """Determine if an incident is related based on keywords."""
+    if not keywords:
+        return True
+
+    text = incident.relevance_text
+    return any(keyword.casefold() in text for keyword in keywords)
+
 
 def main():
-    print("Hello from journalist-helper!")
-    # call_model coming soon! For now, use chat.send with tools:
+    """Main function to run the application."""
+    logger.info("Spouštím zpravodajský monitor...")
+    logger.info("Používám model: %s", DEFAULT_MODEL)
+    logger.info("Sleduji zdroje: %s", [source.name for source in SOURCES])
+    
+    # Prepare incidents
+    incidents = extract_incidents()
 
+    # Filter relevant incidents
+    relevant_incidents = [incident for incident in incidents if is_related(incident=incident, keywords=DEFAULT_FILTER_KEYWORDS)]
+    logger.info(
+        " - Filtrováno na %d relevantních incidentů z %d celkových.",
+        len(relevant_incidents),
+        len(incidents),
+    )
 
-    with OpenRouter(
-        api_key=os.getenv("OPENROUTER_API_KEY")
-    ) as client:
-        response = client.chat.send(
-            model="z-ai/glm-4.5-air:free",
-            messages=[
-                {"role": "user", "content": "What is the weather in San Francisco?"}
-            ],
-            tools=[{
-                "type": "function",
-                "function": {
-                    "name": "get_weather",
-                    "description": "Get the weather for a location",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"location": {"type": "string"}},
-                        "required": ["location"]
-                    }
-                }
-            }]
-        )
+    # For debugging purposes, print the relevant incidents
+    for incident in relevant_incidents:
+        logger.debug("%s", incident)
 
-    print(response.choices[0].message)
-
+    # Perform triage using the LLM
+    try:
+        triage_result = perform_triage(relevant_incidents)
+        logger.info("Triage completed successfully.")
+        return triage_result
+    except RuntimeError as exc:
+        logger.error("Triage failed: %s", exc)
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    if result is not None:
+        print(result)

@@ -1,0 +1,66 @@
+name: Run Journalist Helper
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    name: Execute app and publish output
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run application and capture output
+        id: run_app
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        shell: bash
+        run: |
+          set +e
+          triage_output="$(uv run python -c 'from main import main; result = main(); print(result if result is not None else "")' 2>run-stderr.txt)"
+          exit_code=$?
+
+          {
+            echo "triage_result<<EOF"
+            if [[ -n "$triage_output" ]]; then
+              printf '%s\n' "$triage_output"
+            else
+              echo "(no output)"
+            fi
+            echo "EOF"
+            echo "exit_code=${exit_code}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write run summary from step output
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## journalist-helper triage result"
+            echo
+            echo "- Exit code: ${{ steps.run_app.outputs.exit_code }}"
+            echo
+            echo "\`\`\`text"
+            echo "${{ steps.run_app.outputs.triage_result }}"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail workflow if application failed
+        if: steps.run_app.outputs.exit_code != '0'
+        run: exit 1
