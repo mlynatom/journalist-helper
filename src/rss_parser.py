@@ -25,7 +25,7 @@ def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
                 "User-Agent": USER_AGENT,
                 "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
             },
-            timeout=30,
+            timeout=60,
         )
         response.raise_for_status()
         return response.content, response.status_code, response.headers.get("Content-Type")
