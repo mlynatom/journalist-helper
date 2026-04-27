@@ -1,51 +1,78 @@
-# Relevance incidentů pro okres Kolín
+Přehled relevantních zpráv podle zdroje:
+- České noviny - ČR: 0
+- Zásahy JPO: 8
+- PID - mimorádnosti: 0
+- Nehody a uzavírky - Kolín: 0
+- Uzavírky - Kolín (krátkodobé): 0
+- Uzavírky - Kolín (dlouhodobé): 14
+- Uzavírky - Kolín (plánované): 6
+- Nemocnice Kolín - Přehled dokumentů: 25
+- Policie České republiky – KŘP Středočeského kraje: 12
+- IDNES - Praha a střední Čechy: 0
+- Novinky.cz - Domácí: 0
+- HZS Středočeského kraje: 0
+Celkem relevantních zpráv: 65
 
-Všechny incidenty jsou relevantní pro okres Kolín, protože se všechny odehrávají na území tohoto okresu. Zde jsou seřazeny podle důležitosti a relevance pro místní publikum:
+**🟢 Relevantní zprávy pro okres Kolín**  
+*(seřazeno podle předpokládané čtenosti a dopadu na místní obyvatele)*  
 
-## 1. 🚗 Dopravní nehoda na dálnici D11 u Poříčan
-**Datum:** 26. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190763/  
-**Shrnutí:** Zásah k uvolnění dálnice D11 u km 25.5, který měl dopad na dopravu v celém okrese.  
-**Důvod relevance:** Dálnice D11 je **hlavní dopravní tepna** procházející okresem Kolín. Nehoda zde způsobila **dopravní komplikace** pro mnoho obyvatel okresu, zejména pro cestující do Prahy nebo Hradce Králové.
+| # | Shrnutí & relevance | Odkaz | Datum |
+|---|----------------------|-------|-------|
+| **1** | **🔥 Požár odpadového místa v Českém Brodě** – požár byl uhašen v 20:14, žádné zranění. Ovlivnilo to odpadové služby a může mít dopad na kvalitu ovzduší. **Urgentní** pro obyvatele i úřady. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190937/> | 27 . dubna 2026 19:00 |
+| **2** | **🚑 Dopravní nehoda se zraněním v Pečkách** – zásah hasičů, zraněná osoba převezena. Ovlivňuje dopravní situaci v okrese Kolín, zejména pro řidiče a místní podniky. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190917/> | 27 . dubna 2026 15:10 |
+| **3** | **🔥 Požár travnatých porostů v Kolíně** – rychlé hašení, žádné zranění. Připomíná riziko požárů v letních měsících, důležité pro zemědělce a obyvatele. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190911/> | 27 . dubna 2026 13:55 |
+| **4** | **🚑 Transport pacienta ze Zásmuk** – záchrana osob a zvířat, převoz do nemocnice. Ukazuje kapacitu záchranné služby v okrese. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190905/> | 27 . dubna 2026 11:50 |
+| **5** | **💧 Technická pomoc – čerpání vody v Kolíně** – zásah při úniku vody, zajištěna bezpečnost. Důležité pro obyvatele v případě podobných havárií. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190904/> | 27 . dubna 2026 11:30 |
+| **6** | **🚑 Transport pacienta v Plaňanech** – další záchranný zásah, ukazuje rozložení záchranných jednotek po okrese. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190885/> | 27 . dubna 2026 06:45 |
+| **7** | **🔥 Požár travnatých porostů ve Velimu (26. dubna)** – podobně jako bod 3, připomíná požární rizika v okolí Kolína. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190858/> | 26 . dubna 2026 18:00 |
+| **8** | **🔥 Další požár odpadového místa v Českém Brodě (26. dubna)** – ukazuje opakovaný problém v téže lokalitě. | <https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190839/> | 26 . dubna 2026 14:00 |
+| **9** | **🚧 Uzavírka D11 (km 57.5‑57.4, směr Praha) 28. dubna** – krátkodobá uzavírka hlavní silnice, ovlivní dojíždějící do Prahy i Kolína. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-75009> | 27 . dubna 2026 09:30 |
+| **10** | **🚧 Uzavírka silnice III/12542 v Kořenicích (30. dubna)** – plánovaná oprava, dopad na místní dopravu a objízdky. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-8746a> | 21 . dubna 2026 |
+| **11** | **🚧 Uzavírka silnice III/3303 (Český Brod‑Chrášťany) do 27. dubna** – dlouhodobá oprava, ovlivní spojení mezi obcemi. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-c2eb2> | 15 . dubna 2026 |
+| **12** | **🚧 Uzavírka Masarykova náměstí v Týnici nad Labem (celý srpen)** – dlouhodobá rekonstrukce, zásadní pro městskou dopravu v Týnici. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-0227d> | 1 . dubna 2026 |
+| **13** | **🚧 Uzavírka silnice II/334 v Přestavlkách (8‑30 dubna)** – práce na inženýrských sítích, ovlivní místní provoz. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-9c73c> | 1 . dubna 2026 |
+| **14** | **🚧 Uzavírka silnice II/334 Barchovice‑Radlice‑Horní Kruty (16 března‑15 května)** – dlouhodobá uzavírka, důležitá pro dopravní spojení v severní části okresu. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-a0464> | 16 . března 2026 |
+| **15** | **🚧 Uzavírka silnice III/33416 Klášterní Skalice‑Svojšice (16 března‑15 května)** – podobně jako výše, dopad na lokální dopravu. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-9aea1> | 16 . března 2026 |
+| **16** | **🚧 Uzavírka místní komunikace v Kolíně (ulice Kutnohorská, Mostní, Politických vězňů) do 30. listopadu** – dlouhodobá oprava, omezení pro místní obyvatele. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-aa637> | 2 . března 2026 |
+| **17** | **🚧 Uzavírka silnice III/33420 v Kouřimi (2 března‑30 června)** – oprava a rekonstrukce mostu, ovlivní regionální spojení. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-2d8be> | 1 . března 2026 |
+| **18** | **🚧 Uzavírka silnice III/33411 v Třebovlích (do 31. 12.)** – bezpečnostní opatření kvůli možnému zřícení, dlouhodobý dopad. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-cfd48> | 25 . února 2026 |
+| **19** | **🚧 Uzavírka silnice I/12 v Tuklatách (9 . února‑30. listopadu)** – zúžení pruhů, omezení pro nákladní dopravu, důležité pro regionální logistiku. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-48b2f> | 9 . února 2026 |
+| **20** | **🚧 Uzavírka silnice III/33345h v Kolíně (do 1. května)** – výstavba okružní křižovatky, ovlivní městskou dopravu. | <https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe#bdi-c0f49> | 21 . prosince 2025 |
+| **21** | **🏥 Nová provozní doba OLM (Oddělení laboratorní medicíny) během květnových svátků** – omezený příjem vzorků, důležité pro pacienty. | <https://www.nemocnicekolin.cz/provozni%2Ddoba%2Dolm%2Do%2Dsvatcich/d-2653> | 27 . dubna 2026 |
+| **22** | **🏥 Den Porodnice – veřejné přednášky a prohlídky (24. dubna)** – akce pro budoucí rodiče, zvýší povědomí o službách nemocnice. | <https://www.nemocnicekolin.cz/porodnice%2Dzve%2Dverejnost%2Dna%2Dprednasky%2Da%2Dprohlidky/d-3132> | 24 . dubna 2026 |
+| **23** | **🏥 Konference „Moderní ošetřovatelství“ (22. dubna)** – odborná událost, relevantní pro zdravotnický personál i veřejnost. | <https://www.nemocnicekolin.cz/sestry%2Dkolinske%2Dnemocnice%2Ddrzi%2Dkrok%2Ds%2Dmoderni%2Dmedicinou/d-3130> | 23 . dubna 2026 |
+| **24** | **🏥 Rozvoj PCR kapacit v ON Kolín (10 . března)** – EU‑financovaný projekt, zvyšuje regionální testovací kapacity. | <https://www.nemocnicekolin.cz/rozvoj%2Dlaboratornich%2Dkapacit%2Dpro%2Dpcr%2Dtestovani%2Dv%2Don%2Dkolin/d-3108> | 10 . března 2026 |
+| **25** | **🏥 Bezplatné vyšetření glaukomu (9 . března)** – veřejná zdravotní akce, důležitá pro prevenci očních onemocnění. | <https://www.nemocnicekolin.cz/ocni%2Doddeleni%2Dzve%2Dna%2Dvysetreni%2Dbez%2Dobjednani%2Dpri%2Dsvetovem%2Dtydnu%2Dglaukomu/d-3107> | 9 . března 2026 |
+| **26** | **🏥 Nová pohotovost pro dospělé v pavilonu B (od 2. března)** – změna lokality, důležitá pro pacienty i záchranáře. | <https://www.nemocnicekolin.cz/pohotovost%2Dpro%2Ddospele%2Dje%2Dnove%2Dv%2Dpavilonu%2Db/d-2782> | 2 . března 2026 |
+| **27** | **👮 Seminář sebeobrany na Stř. zdravotnické škole v Kolíně (23 . dubna)** – bezpečnostní vzdělávání pro studenty, lokální komunitní přínos. | <http://policie.gov.cz/clanek/seminar-sebeobrany-pro-studenty-kolinske-zdravky.aspx> | 23 . dubna 2026 13:22 |
+| **28** | **👮 Speed Marathon – kontrola rychlosti (15 . dubna)** – policejní akce, jeden řidič přišel o řidičák, upozornění pro všechny řidiče v okrese. | <http://policie.gov.cz/clanek/speed-marathon-na-kolinsku-vetsina-ridicu-ukaznena-jeden-zavodnik-z-veletova-prisel-o-ridicsky-prukaz.aspx> | 22 . dubna 2026 12:54 |
+| **29** | **👮 Policijní ples podpořil místní děti (14 . dubna)** – charitativní akce, podpora dětí z okolí Kolína, dobrý PR pro policii. | <http://policie.gov.cz/clanek/policie-pomaha-i-mimo-sluzbu-policejni-ples-v-koline-podporil-mistni-deti-castkou-120-000-kc.aspx> | 14 . dubna 2026 14:39 |
+| **30** | **👮 Maturanti navštívili ÚO Kolín (27 . března)** – otevření policejního odboru pro studenty, podpora povědomí o policii. | <http://policie.gov.cz/clanek/budouci-policiste-nahledli-pod-poklicku-uzemni-odbor-kolin-privital-maturanty.aspx> | 10 . dubna 2026 12:43 |
+| **31** | **👮 Kontrola bezpečnostních pásů a dětských sedaček (9‑11 . března)** – připomenutí základní dopravní bezpečnosti, relevantní pro všechny řidiče. | <http://policie.gov.cz/clanek/bezpecnostni-pasy-nejsou-jen-formalita-ale-pojistka-na-zivot.aspx> | 27 . března 2026 12:15 |
+| **32** | **👮 Prevence „Klidná jízda s čistou hlavou“ (únor 2026)** – přednášky na zdravotnických školách, zaměřeno na alkohol a drogy za volantem. | <http://policie.gov.cz/clanek/alkohol-a-drogy-za-volant-nepatri-na-kolinske-zdravce-se-v-unoru-mluvilo-o-zodpovednosti.aspx> | 18 . března 2026 12:57 |
+| **33** | **👮 Projekt „Respektuj můj osobní prostor“ (listopad 2025)** – dlouhodobá preventivní kampaň, stále aktivní v Kolíně, může ovlivnit bezpečnost dětí. | <http://policie.gov.cz/clanek/tyden-za-detstvi-bez-nasili-policie-cr-spousti-na-kolinsku-novy-preventivni-projekt-respektuj-muj-osobni-prostor.aspx> | 28 . listopadu 2025 13:01 |
+| **34** | **👮 Telefony za volantem – akce (říjen 2025)** – i když starší, ukazuje trend policejních kontrol, může se opakovat. | <http://policie.gov.cz/clanek/telefony-za-volantem-v-hledacku-kolinske-policie.aspx> | 27 . října 2025 14:33 |
+| **35** | **👮 Seminář o online bezpečnosti a prevenci násilí (leden 2026)** – relevantní pro školy a rodiče v okrese. | <http://policie.gov.cz/clanek/seminar-v-koline-se-zameril-na-bezpecnost-v-online-prostoru-a-prevenci-nasili-na-skolach.aspx> | 22 . ledna 2026 12:57 |
+| **36** | **👮 Prezentace policie na vědecké konferenci „Já filmař“ (28 . ledna 2026)** – ukazuje spolupráci s místními školami, ale dopad na širokou veřejnost je menší. | <http://policie.gov.cz/clanek/policie-cr-se-predstavila-na-vedecke-konferenci-ja-filmar.aspx> | 28 . ledna 2026 10:04 |
+| **37** | **👮 Projekt „Bezpečnostní pásy“ (březen 2026)** – součást akce ROADPOL, připomínka základní bezpečnosti. | <http://policie.gov.cz/clanek/bezpecnostni-pasy-nejsou-jen-formalita-ale-pojistka-na-zivot.aspx> | 27 . března 2026 12:15 |
+| **38** | **👮 Prevence „Příběh o chybě, odhodlání a nové kůži“ (16 . března 2026)** – setkání se žáky, podpora prevence násilí. | <http://policie.gov.cz/clanek/prevence-ktera-pali-pribeh-o-chybe-odhodlani-a-nove-kuzi.aspx> | 17 . března 2026 07:39 |
+| **39** | **👮 Modré majáky k Evropskému dni obětí (19 . února 2026)** – připomínka obětem trestných činů, lokální symbolika. | <http://policie.gov.cz/clanek/modre-majaky-pro-obeti-kolinsko-si-pripomina-evropsky-den-obeti-trestnych-cinu.aspx> | 19 . února 2026 13:23 |
 
-## 2. 🔥 Požár polního porostu ve Velimi
-**Datum:** 26. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190858/  
-**Shrnutí:** Požár trávy a polního porostu, který byl hasičům ukončen po necelou hodinu.  
-**Důvod relevance:** Požáry suchých porostů představují **vysoké riziko**, zejména v suchém období. Tento incident varuje místní obyvatele před nebezpečím a upozorňuje na nutnost opatrnosti.
+---
 
-## 3. 🗑️ Požár odpadu v Českém Brodu
-**Datum:** 26. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190839/  
-**Shrnutí:** Požár odpadu, který hasiči lokalizovali během necelé hodiny.  
-**Důvod relevance:** Jedná se o **druhý požár odpadu** v Českém Brodu během dvou dnů, což může naznačovat **opakující se problém** v této oblasti. Tento typ požáru může mít **dopad na životní prostředí**.
+### 📌 Shrnutí důležitých témat pro čtenáře v Kolíně
+1. **Bezpečnost a požáry** – několik požárů (Český Brod, Kolín, Velim) a dopravních nehod vyžaduje zvýšenou pozornost obyvatel i úřadů.  
+2. **Dopravní omezení** – řada dlouhodobých uzavírek (D11, silnice III/3303, II/334, III/33420 atd.) ovlivní dojíždění, logistiku a plánování cest.  
+3. **Zdravotnické služby** – změny v provozu OLM, nové pohotovosti, bezplatné vyšetření a rozšíření PCR kapacit jsou klíčové pro pacienty.  
+4. **Policajní aktivity a prevence** – semináře, speed‑marathon, kampaně proti používání mobilů a alkoholu za volantem, a charitativní projekty mají přímý dopad na bezpečnost a komunitní soudržnost.  
 
-## 4. 🚑 Dopravní nehoda se zraněním v Břežanech I
-**Datum:** 25. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190796/  
-**Shrnutí:** Dopravní nehoda s následkem zranění, která byla vyřešena během necelé hodiny.  
-**Důvod relevance:** Dopravní nehody se zraněními jsou **vždy závažné** a mají přímý dopad na bezpečnost obyvatel okresu. Informace o nehodách pomáhá **zvýšit povědomí o bezpečnosti** na silnicích.
+---
 
-## 5. 🗑️ Další požár odpadu v Českém Brodu
-**Datum:** 25. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190784/  
-**Shrnutí:** Požár odpadu, který hasiči zvládli během hodiny.  
-**Důvod relevance:** **Opakující se požáry** v jedné obci mohou naznačovat systémový problém s nakládáním s odpadem. Tento incident je **druhý v pořadbě** za pouhé dva dny.
+### ❓ Co je méně relevantní?
+- **Zprávy č. 33‑38** (nabídky pracovních míst v nemocnici) jsou **okrajově relevantní** – zajímají jen uchazeče a nejsou obecně čtenářsky zásadní.  
+- **Zprávy č. 40‑45** (další pracovní nabídky, interní projekty) jsou **mimořádně úzké** a nevyžadují širší informování.  
+- **Zprávy č. 46‑50** (stěhování bister, endoskopie, buk, atd.) mají **lokální dopad** pouze na konkrétní oddělení a nejsou pro širokou veřejnost prioritní.  
 
-## 6. 📊 Měření koncentrací v Břežanech II
-**Datum:** 25. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190815/  
-**Shrnutí:** Technická pomoc při měření koncentrací látek v prostředí.  
-**Důvod relevance:** Tento typ zásahu může souviset s **potenciálním znečištěním** a je důležitý pro **ochranu zdraví obyvatel**. I když nebylo uvedeno, o jaké látky šlo, monitoring je klíčový pro prevenci rizik.
+---
 
-## 7. 🆘 Záchrana osob a zvířat z výšky v Býchorech
-**Datum:** 25. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190812/  
-**Shrnutí:** Záchranný zásah zaměřený na osoby a zvířata z výškových míst.  
-**Důvod relevance:** Jedná se o **speciální záchranný zásah**, který může být pro místní obyvatele zajímavý jako příklad **profesionální práce hasičů**.
-
-## 8. 👁️ Monitoring v Kolíně
-**Datum:** 24. dubna 2026  
-**Odkaz:** https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/190747/  
-**Shrnutí:** Technická pomoc při monitoringu situace v Kolíně.  
-**Důvod relevance:** Tento zásah se týká **přímo města Kolín**, ale jedná se o méně dramatickou událost, která je spíše technické povahy.
+**Závěr:** Pro čtenáře v okrese Kolín jsou nejdůležitější aktuální požáry, dopravní nehody, uzavírky hlavních komunikací a zdravotnické změny. Policejní akce a preventivní programy mají také vysokou čtenářskou hodnotu, protože přímo ovlivňují bezpečnost a povědomí obyvatel. Ostatní položky lze zmínit stručně jako doplňkové informace.

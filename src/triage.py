@@ -19,7 +19,7 @@ def build_model_prompt(news_items: list[NewsItem]) -> str:
     if not news_items:
         return "Žádné novinky ani zprávy k posouzení."
 
-    prompt = "Následující zprávy a důležitá zjištění byly nalezeny v RSS feedu:\n\n"
+    prompt = "Následující zprávy a důležitá zjištění byly nalezeny ve zdrojích:\n\n"
     for idx, news_item in enumerate(news_items, start=1):
         prompt += f"{idx}. [{news_item.source}] {news_item.title}\n"
         if news_item.published_at:
@@ -35,7 +35,7 @@ def build_model_prompt(news_items: list[NewsItem]) -> str:
     
     Položky by měly být seřazeny podle důležitosti, předpokládané čtenosti a relevance pro místní publikum. Vyhodnoťte, o čem je důležité informovat čtenáře v Kolíně a co by pro ně mohlo být nejzajímavější. Pokud je položka pouze okrajově relevantní, uveď to. Pokud je zpráva mimořádně důležitá nebo neobvyklá, uveď ji na první místo.
 
-    V odpovědích používej i tučné zvýraznění a emoji, aby bylo jasné, které informace jsou klíčové.
+    V odpovědích používej i tučné zvýraznění a emoji, aby bylo jasné, které informace jsou klíčové. Uveď všechny zprávy, žádné nevynechávej, ale jasně označuj, které jsou nejdůležitější. Pokud je zpráva relevantní, ale není zcela jasné, proč, uveď to a navrhni možné důvody relevance. Pokud je zpráva zcela nerelevantní, vysvětli proč. Zaměř se na to, co by mohlo být důležité pro místní komunitu v Kolíně, a nezapomeň zohlednit i širší kontext, například pokud se jedná o událost, která by mohla mít dopad na dopravu, bezpečnost nebo jiné aspekty života v Kolíně. Buď co nejkonkrétnější a nejstručnější, ale zároveň poskytni dostatek informací pro pochopení důležitosti každé zprávy.
     """
     return prompt
 

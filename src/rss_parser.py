@@ -76,6 +76,7 @@ def parse_rss_feed(feed_source: Source) -> list[NewsItem]:
                 link=entry.get("link", ""),
                 published_at=parse_pubdate(entry.get("published")),
                 description=entry.get("summary", ""),
+                always_relevant=feed_source.always_relevant,
             )
         )
 

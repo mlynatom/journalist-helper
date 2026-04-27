@@ -1,4 +1,5 @@
 """Main entry point for the journalist helper application."""
+from collections import Counter
 import logging
 import os
 from pathlib import Path
@@ -6,6 +7,8 @@ from pathlib import Path
 import requests
 
 from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES
+from src.nemocnice_kolin_parser import parse_nemocnice_kolin_page
+from src.nehody_uzavirky_parser import parse_nehody_uzavirky_page
 from src.rss_parser import parse_rss_feed
 from src.schemas import NewsItem
 from src.telegram import send_telegram_alert
@@ -21,13 +24,36 @@ def save_triage_result(triage_result: str) -> None:
     output_path.write_text(triage_result, encoding="utf-8")
 
 
+def format_source_statistics(news_items: list[NewsItem]) -> str:
+    """Render a compact per-source summary for the triage output."""
+    counts = Counter(news_item.source for news_item in news_items)
+    lines = ["Přehled relevantních zpráv podle zdroje:"]
+
+    for source in SOURCES:
+        lines.append(f"- {source.name}: {counts.get(source.name, 0)}")
+
+    lines.append(f"Celkem relevantních zpráv: {len(news_items)}")
+    return "\n".join(lines)
+
+
+def prepend_source_statistics(triage_result: str, news_items: list[NewsItem]) -> str:
+    """Add the source statistics block before the triage result."""
+    statistics_block = format_source_statistics(news_items)
+    return f"{statistics_block}\n\n{triage_result}"
+
+
 def extract_news_items() -> list[NewsItem]:
     """Extract news items from all configured sources."""
     news_items: list[NewsItem] = []
     for source in SOURCES:
         logger.info("Načítám zdroj zpráv: %s (%s)", source.name, source.url)
         try:
-            source_news_items = parse_rss_feed(source)
+            if source.parser == "nehody_uzavirky":
+                source_news_items = parse_nehody_uzavirky_page(source)
+            elif source.parser == "nemocnice_kolin":
+                source_news_items = parse_nemocnice_kolin_page(source)
+            else:
+                source_news_items = parse_rss_feed(source)
             logger.info(" - Načteno %d zpráv.", len(source_news_items))
             news_items.extend(source_news_items)
         except RuntimeError as exc:
@@ -37,7 +63,7 @@ def extract_news_items() -> list[NewsItem]:
 
 def is_related(news_item: NewsItem, keywords: list[str]) -> bool:
     """Determine if a news item is related based on keywords."""
-    if not keywords:
+    if news_item.always_relevant or not keywords:
         return True
 
     text = news_item.relevance_text
@@ -76,7 +102,9 @@ def main():
 
         except RuntimeError as exc:
             logger.error("Triage failed: %s", exc)
+            triage_result = "Triage selhal: " + str(exc)
 
+    triage_result = prepend_source_statistics(triage_result, relevant_news_items)
 
     save_triage_result(triage_result)
     logger.info("Odesílám triage výsledek do Telegramu...")

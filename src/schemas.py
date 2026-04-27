@@ -11,6 +11,7 @@ class NewsItem(BaseModel):
     link: str = ""
     published_at: datetime | None = None
     description: str = ""
+    always_relevant: bool = False
 
     @property
     def relevance_text(self) -> str:
@@ -28,3 +29,5 @@ class Source(BaseModel):
     """Model representing an RSS source of news items."""
     name: str
     url: str
+    parser: str = "rss"
+    always_relevant: bool = False
