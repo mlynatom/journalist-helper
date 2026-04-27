@@ -4,8 +4,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-class Incident(BaseModel):
-    """Model representing a single incident worth tracking."""
+class NewsItem(BaseModel):
+    """Model representing a single news item worth tracking."""
     source: str
     title: str = ""
     link: str = ""
@@ -25,6 +25,6 @@ class Incident(BaseModel):
 
 
 class Source(BaseModel):
-    """Model representing a RSS source of incidents."""
+    """Model representing an RSS source of news items."""
     name: str
     url: str

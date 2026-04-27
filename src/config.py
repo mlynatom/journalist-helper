@@ -17,6 +17,10 @@ SOURCES: list[Source] = [
         name="PID - mimorádnosti",
         url="https://pid.cz/feed/rss-mimoradnosti/"
     ),
+    Source(
+        name="Policie České republiky – KŘP Středočeského kraje",
+        url="https://policie.gov.cz/SCRIPT/rss.aspx?nid=1314"
+    )
 ]
 
 DEFAULT_MODEL = os.getenv("OPENROUTER_MODEL", "z-ai/glm-4.5-air:free")

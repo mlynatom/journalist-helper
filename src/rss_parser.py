@@ -8,7 +8,7 @@ import logging
 import feedparser
 import requests
 
-from src.schemas import Incident, Source
+from src.schemas import NewsItem, Source
 
 
 logger = logging.getLogger(__name__)
@@ -43,8 +43,8 @@ def parse_pubdate(value: str | None) -> datetime | None:
         return None
 
 
-def parse_rss_feed(feed_source: Source) -> list[Incident]:
-    """Parse an RSS feed and return a list of entries."""
+def parse_rss_feed(feed_source: Source) -> list[NewsItem]:
+    """Parse an RSS feed and return a list of news items."""
     feed_data, status, content_type = fetch_feed(feed_source)
     feed: dict = feedparser.parse(feed_data)
 
@@ -67,10 +67,10 @@ def parse_rss_feed(feed_source: Source) -> list[Incident]:
         )
 
     entries = feed.get("entries", [])
-    incident_list = []
+    news_items: list[NewsItem] = []
     for entry in entries:
-        incident_list.append(
-            Incident(
+        news_items.append(
+            NewsItem(
                 source=feed_source.name,
                 title=entry.get("title", ""),
                 link=entry.get("link", ""),
@@ -79,11 +79,11 @@ def parse_rss_feed(feed_source: Source) -> list[Incident]:
             )
         )
 
-    return incident_list
+    return news_items
 
 
 if __name__ == "__main__":
     source = Source(name="České noviny - ČR", url="https://www.ceskenoviny.cz/sluzby/rss/cr.php")
-    incidents = parse_rss_feed(source)
+    parsed_news_items = parse_rss_feed(source)
 
-    print(incidents)
+    print(parsed_news_items)
