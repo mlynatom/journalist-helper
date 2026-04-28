@@ -52,7 +52,7 @@ def perform_triage(news_items: list[NewsItem]) -> str:
             response: ChatResult = client.chat.send(
                 model=DEFAULT_MODEL,
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant who is a professional journalist that helps triage news and important updates."},
+                    {"role": "system", "content": "You are a helpful assistant who is a professional journalist that helps triage news and important updates. Your answers should be maximum 4096 characters long."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.2,
