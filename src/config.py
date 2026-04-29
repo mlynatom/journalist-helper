@@ -7,12 +7,8 @@ from src.schemas import Source
 
 # List of RSS sources to monitor
 SOURCES: list[Source] = [
-    Source(
-        name="České noviny - ČR", url="https://www.ceskenoviny.cz/sluzby/rss/cr.php"
-    ),
-    Source(
-        name="Zásahy JPO", url="https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/feed.xml"
-    ),
+    Source(name="České noviny - ČR", url="https://www.ceskenoviny.cz/sluzby/rss/cr.php"),
+    Source(name="Zásahy JPO", url="https://pkr.kr-stredocesky.cz/pkr/zasahy-jpo/feed.xml"),
     Source(name="PID - mimorádnosti", url="https://pid.cz/feed/rss-mimoradnosti/"),
     Source(
         name="Nehody a uzavírky - Kolín",
@@ -76,12 +72,8 @@ class AppSettings(BaseSettings):
     )
 
     # Telegram settings
-    bot_token: str = Field(
-        default="", description="Telegram bot token for sending alerts."
-    )
-    user_id: str = Field(
-        default="", description="Telegram user/chat ID for receiving alerts."
-    )
+    bot_token: str = Field(default="", description="Telegram bot token for sending alerts.")
+    user_id: str = Field(default="", description="Telegram user/chat ID for receiving alerts.")
 
     # Redis settings
     redis_url: str = Field(

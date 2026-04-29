@@ -23,12 +23,8 @@ class NewsItem(BaseModel):
     def __str__(self) -> str:
         """Human-friendly output used by print()."""
         title = self.title or "(untitled)"
-        published = (
-            self.published_at.isoformat() if self.published_at else "unknown time"
-        )
-        return (
-            f"[{self.source}] {title} | {published} | {self.link} | {self.description}"
-        )
+        published = self.published_at.isoformat() if self.published_at else "unknown time"
+        return f"[{self.source}] {title} | {published} | {self.link} | {self.description}"
 
 
 class Source(BaseModel):

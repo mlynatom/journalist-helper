@@ -1,7 +1,7 @@
 [project]
 name = "journalist-helper"
 version = "0.1.0"
-description = "Add your description here"
+description = "A helper tool for journalists to track news items from various sources."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -12,6 +12,26 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "redis>=7.4.0",
     "requests>=2.33.1",
+]
+
+
+[dependency-groups]
+dev = [
     "ruff>=0.15.12",
     "ty>=0.0.32",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",
+    "D203",
+    "D212",
+    "D401",
+    "D404",
+    "D406",
+    "D407",
 ]

@@ -19,7 +19,9 @@ except ModuleNotFoundError:  # Allows `uv run src/nemocnice_kolin_parser.py`
 
 logger = logging.getLogger(__name__)
 
-USER_AGENT = "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)"
+USER_AGENT = (
+    "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)"
+)
 DETAIL_TIMEOUT = 20
 DETAIL_MAX_CHARS = 700
 

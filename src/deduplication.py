@@ -25,9 +25,7 @@ def deduplicate_news_items(news_items: list[NewsItem]) -> list[NewsItem]:
 
         if not r.exists(item_key):
             unique_items.append(item)
-            r.set(
-                item_key, "1", ex=24 * 3600
-            )  # Mark this item as seen with a 24-hour expiration
+            r.set(item_key, "1", ex=24 * 3600)  # Mark this item as seen with a 24-hour expiration
         else:
             logger.debug("Duplicate news item skipped: %s", item_key)
             # reset expiration for existing key to keep it in the deduplication window

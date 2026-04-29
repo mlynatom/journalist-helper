@@ -13,7 +13,8 @@ TELEGRAM_MAX_LENGTH = 4096
 
 
 def send_telegram_alert(message):
-    """Send a message to a Telegram chat using the Bot API.
+    """
+    Send a message to a Telegram chat using the Bot API.
 
     If the message exceeds Telegram's 4096 character limit, it will be split
     into multiple messages automatically.
@@ -51,7 +52,8 @@ def send_telegram_alert(message):
 
 
 def _split_message(message, max_length=TELEGRAM_MAX_LENGTH):
-    """Split a long message into chunks that fit Telegram's limit.
+    """
+    Split a long message into chunks that fit Telegram's limit.
 
     Tries to split at sensible boundaries (paragraphs, lines) when possible.
     """

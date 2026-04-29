@@ -11,7 +11,9 @@ from src.schemas import NewsItem, Source
 
 logger = logging.getLogger(__name__)
 
-USER_AGENT = "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)"
+USER_AGENT = (
+    "Mozilla/5.0 (compatible; journalist-helper/1.0; +https://github.com/journalist-helper)"
+)
 KOLIN_OKRES_VALUE = "73"
 
 
@@ -39,10 +41,7 @@ def normalize_text(fragment: str) -> str:
     """Collapse HTML fragments into a readable single string."""
     fragment = re.sub(r"<br\s*/?>", "\n", fragment, flags=re.IGNORECASE)
     fragment = re.sub(r"<[^>]+>", "", fragment)
-    lines = [
-        re.sub(r"\s+", " ", html.unescape(line)).strip()
-        for line in fragment.splitlines()
-    ]
+    lines = [re.sub(r"\s+", " ", html.unescape(line)).strip() for line in fragment.splitlines()]
     return " | ".join(line for line in lines if line)
 
 
@@ -54,9 +53,7 @@ def parse_published_at(date_text: str | None, time_text: str | None) -> datetime
     start_time = (time_text or "").split("-", 1)[0].strip()
     try:
         if start_time:
-            return datetime.strptime(
-                f"{date_text.strip()} {start_time}", "%d.%m.%Y %H:%M"
-            )
+            return datetime.strptime(f"{date_text.strip()} {start_time}", "%d.%m.%Y %H:%M")
         return datetime.strptime(date_text.strip(), "%d.%m.%Y")
     except ValueError:
         return None
@@ -95,9 +92,7 @@ def parse_date_block(block_html: str) -> tuple[str | None, str | None]:
     return None, None
 
 
-def parse_traffic_block(
-    block_html: str, source: Source, page_url: str
-) -> NewsItem | None:
+def parse_traffic_block(block_html: str, source: Source, page_url: str) -> NewsItem | None:
     """Parse one incident card into a NewsItem."""
     box_id_match = re.search(r'id="(bdi-[^"]+)"', block_html)
     title_match = re.search(r"<h2>(.*?)</h2>", block_html, flags=re.DOTALL)
@@ -109,9 +104,7 @@ def parse_traffic_block(
         return None
 
     title = normalize_text(title_match.group(1))
-    description = (
-        normalize_text(description_match.group(1)) if description_match else ""
-    )
+    description = normalize_text(description_match.group(1)) if description_match else ""
     date_text, time_text = parse_date_block(block_html)
     published_at = parse_published_at(date_text, time_text)
     box_id = box_id_match.group(1) if box_id_match else ""

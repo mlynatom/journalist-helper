@@ -1,4 +1,5 @@
 """Main entry point for the journalist helper application."""
+
 import logging
 import unicodedata
 from collections import Counter
@@ -46,7 +47,9 @@ def prepend_source_statistics(triage_result: str, news_items: list[NewsItem]) ->
 def normalize_text(value: str) -> str:
     """Normalize text for case- and accent-insensitive matching."""
     normalized = unicodedata.normalize("NFKD", value)
-    return "".join(character for character in normalized if not unicodedata.combining(character)).casefold()
+    return "".join(
+        character for character in normalized if not unicodedata.combining(character)
+    ).casefold()
 
 
 def extract_news_items() -> list[NewsItem]:
@@ -82,12 +85,16 @@ def main():
     logger.info("Spouštím zpravodajský monitor důležitých zpráv...")
     logger.info("Používám model: %s", DEFAULT_MODEL)
     logger.info("Sleduji zdroje: %s", [source.name for source in SOURCES])
-    
+
     # Prepare news items
     news_items = extract_news_items()
 
     # Filter relevant news items
-    relevant_news_items = [news_item for news_item in news_items if is_related(news_item=news_item, keywords=DEFAULT_FILTER_KEYWORDS)]
+    relevant_news_items = [
+        news_item
+        for news_item in news_items
+        if is_related(news_item=news_item, keywords=DEFAULT_FILTER_KEYWORDS)
+    ]
     logger.info(
         " - Filtrováno na %d relevantních zpráv z %d celkových.",
         len(relevant_news_items),
@@ -131,7 +138,7 @@ def main():
         logger.error("Failed to send Telegram alert: %s", exc)
 
     return triage_result
-    
+
 
 if __name__ == "__main__":
     result = main()
