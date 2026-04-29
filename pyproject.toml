@@ -7,7 +7,6 @@ requires-python = ">=3.14"
 dependencies = [
     "feedparser>=6.0.12",
     "openrouter>=0.9.1",
-    "pre-commit>=4.6.0",
     "pydantic>=2.13.3",
     "pydantic-settings>=2.0.0",
     "python-dotenv>=1.2.2",
@@ -20,6 +19,7 @@ dependencies = [
 dev = [
     "ruff>=0.15.12",
     "ty>=0.0.32",
+    "pre-commit>=4.6.0",
 ]
 
 [tool.ruff]
