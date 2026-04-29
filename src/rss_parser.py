@@ -1,15 +1,13 @@
 """Functions for parsing RSS feeds."""
 
+import logging
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-
-import logging
 
 import feedparser
 import requests
 
 from src.schemas import NewsItem, Source
-
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +26,15 @@ def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
             timeout=60,
         )
         response.raise_for_status()
-        return response.content, response.status_code, response.headers.get("Content-Type")
+        return (
+            response.content,
+            response.status_code,
+            response.headers.get("Content-Type"),
+        )
     except requests.RequestException as exc:
-        raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {exc}") from exc
+        raise RuntimeError(
+            f"Failed to fetch RSS feed {feed_source.url}: {exc}"
+        ) from exc
 
 
 def parse_pubdate(value: str | None) -> datetime | None:
@@ -39,7 +43,7 @@ def parse_pubdate(value: str | None) -> datetime | None:
         return None
     try:
         return parsedate_to_datetime(value)
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         return None
 
 
@@ -84,7 +88,9 @@ def parse_rss_feed(feed_source: Source) -> list[NewsItem]:
 
 
 if __name__ == "__main__":
-    source = Source(name="České noviny - ČR", url="https://www.ceskenoviny.cz/sluzby/rss/cr.php")
+    source = Source(
+        name="České noviny - ČR", url="https://www.ceskenoviny.cz/sluzby/rss/cr.php"
+    )
     parsed_news_items = parse_rss_feed(source)
 
     print(parsed_news_items)

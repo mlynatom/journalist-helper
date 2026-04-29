@@ -4,8 +4,10 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+
 class NewsItem(BaseModel):
     """Model representing a single news item worth tracking."""
+
     source: str
     title: str = ""
     link: str = ""
@@ -21,12 +23,17 @@ class NewsItem(BaseModel):
     def __str__(self) -> str:
         """Human-friendly output used by print()."""
         title = self.title or "(untitled)"
-        published = self.published_at.isoformat() if self.published_at else "unknown time"
-        return f"[{self.source}] {title} | {published} | {self.link} | {self.description}"
+        published = (
+            self.published_at.isoformat() if self.published_at else "unknown time"
+        )
+        return (
+            f"[{self.source}] {title} | {published} | {self.link} | {self.description}"
+        )
 
 
 class Source(BaseModel):
     """Model representing an RSS source of news items."""
+
     name: str
     url: str
     parser: str = "rss"

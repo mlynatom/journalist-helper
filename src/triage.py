@@ -4,6 +4,7 @@ import logging
 
 from openrouter import OpenRouter
 from openrouter.components import ChatResult
+
 from src.config import DEFAULT_MODEL, settings
 from src.schemas import NewsItem
 

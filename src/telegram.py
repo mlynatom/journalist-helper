@@ -1,7 +1,8 @@
 """Telegram alerting module for journalist-helper."""
 
-import requests
 import logging
+
+import requests
 
 from src.config import settings
 
@@ -13,10 +14,10 @@ TELEGRAM_MAX_LENGTH = 4096
 
 def send_telegram_alert(message):
     """Send a message to a Telegram chat using the Bot API.
-    
+
     If the message exceeds Telegram's 4096 character limit, it will be split
     into multiple messages automatically.
-    
+
     Uses MarkdownV2 parse mode to support LLM-generated Markdown formatting
     (bold **text**, tables, code blocks, etc.).
     """
@@ -26,7 +27,7 @@ def send_telegram_alert(message):
 
     # Split message if it's too long
     messages = _split_message(message)
-    
+
     responses = []
     for idx, msg in enumerate(messages):
         payload = {
@@ -35,29 +36,34 @@ def send_telegram_alert(message):
             "parse_mode": "MARKDOWN",
         }
 
-        logger.info("Sending Telegram message %d/%d (length: %d)", idx + 1, len(messages), len(msg))
+        logger.info(
+            "Sending Telegram message %d/%d (length: %d)",
+            idx + 1,
+            len(messages),
+            len(msg),
+        )
 
         response = requests.post(url, json=payload, timeout=10)
         response.raise_for_status()  # Raise an error for bad responses
         responses.append(response.json())
-    
+
     return responses
 
 
 def _split_message(message, max_length=TELEGRAM_MAX_LENGTH):
     """Split a long message into chunks that fit Telegram's limit.
-    
+
     Tries to split at sensible boundaries (paragraphs, lines) when possible.
     """
     if len(message) <= max_length:
         return [message]
-    
+
     chunks = []
     current_chunk = ""
-    
+
     # Try to split by double newlines first (paragraph breaks)
     paragraphs = message.split("\n\n")
-    
+
     for para in paragraphs:
         if len(current_chunk) + len(para) + 2 <= max_length:
             if current_chunk:
@@ -67,17 +73,17 @@ def _split_message(message, max_length=TELEGRAM_MAX_LENGTH):
             # If current chunk is not empty, save it
             if current_chunk:
                 chunks.append(current_chunk)
-            
+
             # If paragraph is too long by itself, split it further
             if len(para) > max_length:
                 sub_chunks = _split_long_paragraph(para, max_length)
                 chunks.extend(sub_chunks)
             else:
                 current_chunk = para
-    
+
     if current_chunk:
         chunks.append(current_chunk)
-    
+
     return chunks
 
 
@@ -86,7 +92,7 @@ def _split_long_paragraph(text, max_length=TELEGRAM_MAX_LENGTH):
     lines = text.split("\n")
     chunks = []
     current = ""
-    
+
     for line in lines:
         if len(current) + len(line) + 1 <= max_length:
             if current:
@@ -100,8 +106,8 @@ def _split_long_paragraph(text, max_length=TELEGRAM_MAX_LENGTH):
                 chunks.append(line)
             else:
                 current = line
-    
+
     if current:
         chunks.append(current)
-    
+
     return chunks

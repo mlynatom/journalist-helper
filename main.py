@@ -1,22 +1,20 @@
 """Main entry point for the journalist helper application."""
-from redis.retry import E
-from collections import Counter
 import logging
-import os
-from pathlib import Path
 import unicodedata
+from collections import Counter
+from pathlib import Path
 
 import requests
 
 from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES, settings
-from src.nemocnice_kolin_parser import parse_nemocnice_kolin_page
+from src.deduplication import deduplicate_news_items
 from src.nehody_uzavirky_parser import parse_nehody_uzavirky_page
+from src.nemocnice_kolin_parser import parse_nemocnice_kolin_page
 from src.rss_parser import parse_rss_feed
 from src.schemas import NewsItem
 from src.telegram import send_telegram_alert
 from src.triage import perform_triage
-from src.deduplication import deduplicate_news_items
-    
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 

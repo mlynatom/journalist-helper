@@ -1,7 +1,7 @@
 """Configuration for the application."""
 
-from pydantic_settings import BaseSettings
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 from src.schemas import Source
 
@@ -62,41 +62,38 @@ SOURCES: list[Source] = [
     ),
 ]
 
+
 class AppSettings(BaseSettings):
     """Application settings loaded from environment variables."""
-    
+
     # OpenRouter API settings
     openrouter_api_key: str = Field(
-        default="",
-        description="API key for OpenRouter API. Required for LLM triaging."
+        default="", description="API key for OpenRouter API. Required for LLM triaging."
     )
     openrouter_model: str = Field(
         default="openai/gpt-oss-120b:free",
-        description="LLM model to use for triaging (OpenRouter model name)."
+        description="LLM model to use for triaging (OpenRouter model name).",
     )
-    
+
     # Telegram settings
     bot_token: str = Field(
-        default="",
-        description="Telegram bot token for sending alerts."
+        default="", description="Telegram bot token for sending alerts."
     )
     user_id: str = Field(
-        default="",
-        description="Telegram user/chat ID for receiving alerts."
+        default="", description="Telegram user/chat ID for receiving alerts."
     )
-    
+
     # Redis settings
     redis_url: str = Field(
         default="",
-        description="Redis URL for deduplication. Format: redis://user:password@host:port/db"
+        description="Redis URL for deduplication. Format: redis://user:password@host:port/db",
     )
-    
+
     # Output settings
     triage_output_file: str = Field(
-        default="triage_result.txt",
-        description="File path to save triage results."
+        default="triage_result.txt", description="File path to save triage results."
     )
-    
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

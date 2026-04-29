@@ -1,10 +1,10 @@
 """Parser for Nemocnice Kolin document overview page."""
 
-from datetime import datetime
 import html
 import importlib
 import logging
 import re
+from datetime import datetime
 from urllib.parse import urljoin
 
 import requests
@@ -38,7 +38,9 @@ def fetch_documents_page(feed_source: Source) -> tuple[str, int | None, str | No
         response.raise_for_status()
         return response.text, response.status_code, response.headers.get("Content-Type")
     except requests.RequestException as exc:
-        raise RuntimeError(f"Failed to fetch Nemocnice Kolin page {feed_source.url}: {exc}") from exc
+        raise RuntimeError(
+            f"Failed to fetch Nemocnice Kolin page {feed_source.url}: {exc}"
+        ) from exc
 
 
 def normalize_text(value: str) -> str:
@@ -132,7 +134,9 @@ def extract_detail_description(detail_html: str) -> str:
                 return trim_description(text)
 
     # Fallback to first meaningful paragraph from the editor content.
-    for paragraph in re.finditer(r"<p[^>]*>(?P<text>.*?)</p>", editor_html, flags=re.IGNORECASE | re.DOTALL):
+    for paragraph in re.finditer(
+        r"<p[^>]*>(?P<text>.*?)</p>", editor_html, flags=re.IGNORECASE | re.DOTALL
+    ):
         text = normalize_text(paragraph.group("text"))
         if text and len(text) > 20 and not looks_like_navigation(text):
             return trim_description(text)
@@ -188,7 +192,9 @@ def parse_nemocnice_kolin_page(feed_source: Source) -> list[NewsItem]:
             detail_html = fetch_detail_page(link, session)
             detail_description = extract_detail_description(detail_html)
             description = detail_description or listing_description
-            published_at = parse_embedded_date(description) or parse_embedded_date(listing_description)
+            published_at = parse_embedded_date(description) or parse_embedded_date(
+                listing_description
+            )
 
             news_items.append(
                 NewsItem(
@@ -211,8 +217,13 @@ def parse_nemocnice_kolin_page(feed_source: Source) -> list[NewsItem]:
 
     return news_items
 
+
 if __name__ == "__main__":
-    source = Source(name="Nemocnice Kolín - dokumenty", url="https://www.nemocnicekolin.cz/dp", always_relevant=True)
+    source = Source(
+        name="Nemocnice Kolín - dokumenty",
+        url="https://www.nemocnicekolin.cz/dp",
+        always_relevant=True,
+    )
     parsed_news_items = parse_nemocnice_kolin_page(source)
 
     print(parsed_news_items)

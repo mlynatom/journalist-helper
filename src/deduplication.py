@@ -1,12 +1,14 @@
 """Redis DB deduplication logic."""
 
-import redis
 import logging
+
+import redis
 
 from src.config import settings
 from src.schemas import NewsItem
 
 logger = logging.getLogger(__name__)
+
 
 def deduplicate_news_items(news_items: list[NewsItem]) -> list[NewsItem]:
     """Deduplicate news items using Redis."""
@@ -23,10 +25,12 @@ def deduplicate_news_items(news_items: list[NewsItem]) -> list[NewsItem]:
 
         if not r.exists(item_key):
             unique_items.append(item)
-            r.set(item_key, "1", ex=24*3600)  # Mark this item as seen with a 24-hour expiration
+            r.set(
+                item_key, "1", ex=24 * 3600
+            )  # Mark this item as seen with a 24-hour expiration
         else:
             logger.debug("Duplicate news item skipped: %s", item_key)
             # reset expiration for existing key to keep it in the deduplication window
-            r.expire(item_key, 24*3600)
+            r.expire(item_key, 24 * 3600)
 
     return unique_items
