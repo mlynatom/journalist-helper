@@ -35,7 +35,7 @@ Proveď triage těchto zpráv pro novináře z okresu Kolín. Tvým hlavním úk
 
 1. 🔥 **HLAVNÍ TÉMATA K ZPRACOVÁNÍ**
    - Zde zařaď 1 až 3 absolutně nejdůležitější události z okresu Kolín (závažné nehody, důležitá rozhodnutí města, významné kauzy, velké investice, dopady na běžný život).
-   - To jsou zprávy, které si zaslouží přednostní sepsání do vlastního plnohodnotného článku. 
+   - To jsou zprávy, které si zaslouží přednostní sepsání do vlastního plnohodnotného článku.
    - Seřaď je od té s absolutně nejvyšším potenciálem.
 
 2. 📌 **DALŠÍ RELEVANTNÍ ZPRÁVY**
@@ -57,7 +57,7 @@ Použij striktně tento formát pro každou jednu zprávu. Zvýrazňuj tučně p
 
 ---
 Vygeneruj finální zprávu pro Telegram podle těchto pravidel. Pamatuj na maximální stručnost, aby se text pohodlně četl na mobilu.
-"""
+"""  # noqa: E501, RUF001
     return prompt
 
 
@@ -66,25 +66,32 @@ def perform_triage(news_items: list[NewsItem]) -> str:
     prompt = build_model_prompt(news_items)
     if not settings.openrouter_api_key:
         logger.warning("OPENROUTER_API_KEY is not set, skipping OpenRouter triage.")
-        raise RuntimeError("OPENROUTER_API_KEY is not set")
+        msg = "OPENROUTER_API_KEY is not set"
+        raise RuntimeError(msg)
 
     try:
         with OpenRouter(api_key=settings.openrouter_api_key) as client:
+            system_prompt = (
+                "You are an expert news editor and journalist assistant. "
+                "Your task is to triage and summarize local news for a journalist "
+                "focusing on the Kolín district (okres Kolín, Czech Republic). "
+                "Your output will be sent directly as a Telegram message. Therefore, "
+                "it MUST be strictly structured, highly readable on mobile, use "
+                "appropriate emojis, and strictly formatted using Telegram-compatible "
+                "Markdown. Never exceed 4000 characters. Always output in Czech."
+            )
+
             response: ChatResult = client.chat.send(
                 model=DEFAULT_MODEL,
                 messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert news editor and journalist assistant. Your task is to triage and summarize local news for a journalist focusing on the Kolín district (okres Kolín, Czech Republic). Your output will be sent directly as a Telegram message. Therefore, it MUST be strictly structured, highly readable on mobile, use appropriate emojis, and strictly formatted using Telegram-compatible Markdown. Never exceed 4000 characters. Always output in Czech.",
-                    },
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.2,
             )
     except Exception as exc:  # pragma: no cover - defensive runtime guard
-        logger.error("OpenRouter triage failed: %s", exc)
-        raise RuntimeError(f"OpenRouter triage failed: {exc}") from exc
+        logger.exception("OpenRouter triage failed")
+        msg = f"OpenRouter triage failed: {exc}"
+        raise RuntimeError(msg) from exc
 
-    content = response.choices[0].message.content
-
-    return content
+    return response.choices[0].message.content

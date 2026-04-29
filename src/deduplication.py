@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 def deduplicate_news_items(news_items: list[NewsItem]) -> list[NewsItem]:
     """Deduplicate news items using Redis."""
     if not settings.redis_url:
-        raise ValueError("REDIS_URL environment variable is not set.")
+        msg = "REDIS_URL environment variable is not set."
+        raise ValueError(msg)
 
     r = redis.Redis.from_url(settings.redis_url)
 
@@ -21,7 +22,7 @@ def deduplicate_news_items(news_items: list[NewsItem]) -> list[NewsItem]:
 
     for item in news_items:
         # Create a unique key for the news item, e.g., based on title and published date
-        item_key = f"{item.title}:{item.published_at.isoformat() if item.published_at else 'unknown'}:{item.source}"
+        item_key = f"{item.title}:{item.published_at.isoformat() if item.published_at else 'unknown'}:{item.source}"  # noqa: E501
 
         if not r.exists(item_key):
             unique_items.append(item)

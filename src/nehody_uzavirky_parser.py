@@ -32,9 +32,8 @@ def fetch_kolin_page(feed_source: Source) -> tuple[str, int | None, str | None]:
         response.raise_for_status()
         return response.text, response.status_code, response.headers.get("Content-Type")
     except requests.RequestException as exc:
-        raise RuntimeError(
-            f"Failed to fetch Kolín incidents from {feed_source.url}: {exc}"
-        ) from exc
+        msg = f"Failed to fetch Kolín incidents from {feed_source.url}: {exc}"
+        raise RuntimeError(msg) from exc
 
 
 def normalize_text(fragment: str) -> str:
@@ -53,8 +52,8 @@ def parse_published_at(date_text: str | None, time_text: str | None) -> datetime
     start_time = (time_text or "").split("-", 1)[0].strip()
     try:
         if start_time:
-            return datetime.strptime(f"{date_text.strip()} {start_time}", "%d.%m.%Y %H:%M")
-        return datetime.strptime(date_text.strip(), "%d.%m.%Y")
+            return datetime.strptime(f"{date_text.strip()} {start_time}", "%d.%m.%Y %H:%M")  # noqa: DTZ007
+        return datetime.strptime(date_text.strip(), "%d.%m.%Y")  # noqa: DTZ007
     except ValueError:
         return None
 

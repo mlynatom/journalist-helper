@@ -41,7 +41,7 @@ SOURCES: list[Source] = [
         always_relevant=True,
     ),
     Source(
-        name="Policie České republiky – KŘP Středočeského kraje",
+        name="Policie České republiky - KŘP Středočeského kraje",
         url="https://policie.gov.cz/SCRIPT/rss.aspx?nid=1314",
     ),
     Source(
@@ -87,6 +87,8 @@ class AppSettings(BaseSettings):
     )
 
     class Config:
+        """Pydantic configuration for loading settings from a .env file."""
+
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False

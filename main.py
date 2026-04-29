@@ -31,8 +31,7 @@ def format_source_statistics(news_items: list[NewsItem]) -> str:
     counts = Counter(news_item.source for news_item in news_items)
     lines = ["Přehled relevantních zpráv podle zdroje:"]
 
-    for source in SOURCES:
-        lines.append(f"- {source.name}: {counts.get(source.name, 0)}")
+    lines.extend(f"- {source.name}: {counts.get(source.name, 0)}" for source in SOURCES)
 
     lines.append(f"Celkem relevantních zpráv: {len(news_items)}")
     return "\n".join(lines)
@@ -66,8 +65,8 @@ def extract_news_items() -> list[NewsItem]:
                 source_news_items = parse_rss_feed(source)
             logger.info(" - Načteno %d zpráv.", len(source_news_items))
             news_items.extend(source_news_items)
-        except RuntimeError as exc:
-            logger.error(" - Chyba při načítání zdroje: %s", exc)
+        except RuntimeError:
+            logger.exception(" - Chyba při načítání zdroje")
     return news_items
 
 
@@ -80,7 +79,7 @@ def is_related(news_item: NewsItem, keywords: list[str]) -> bool:
     return any(normalize_text(keyword) in text for keyword in keywords)
 
 
-def main():
+def main() -> str:
     """Main function to run the application."""
     logger.info("Spouštím zpravodajský monitor důležitých zpráv...")
     logger.info("Používám model: %s", DEFAULT_MODEL)
@@ -103,11 +102,10 @@ def main():
 
     # Deduplicate news items
     try:
-        raise Exception("Simulovaná chyba deduplikace pro testování fallbacku.")
         relevant_news_items = deduplicate_news_items(relevant_news_items)
         logger.info(" - Po deduplikaci zůstalo %d zpráv.", len(relevant_news_items))
-    except Exception as exc:
-        logger.error("Deduplication failed: %s", exc)
+    except Exception:
+        logger.exception("Deduplication failed")
         logger.warning("Pokračuji bez deduplikace.")
 
     # For debugging purposes, print the relevant news items
@@ -124,7 +122,7 @@ def main():
             logger.info("Triage completed successfully.")
 
         except RuntimeError as exc:
-            logger.error("Triage failed: %s", exc)
+            logger.exception("Triage failed")
             triage_result = "Triage selhal: " + str(exc)
 
     triage_result = prepend_source_statistics(triage_result, relevant_news_items)
@@ -134,8 +132,8 @@ def main():
     try:
         send_telegram_alert(triage_result)
         logger.info("Triage výsledek odeslán do Telegramu.")
-    except requests.RequestException as exc:
-        logger.error("Failed to send Telegram alert: %s", exc)
+    except requests.RequestException:
+        logger.exception("Failed to send Telegram alert")
 
     return triage_result
 
@@ -143,4 +141,4 @@ def main():
 if __name__ == "__main__":
     result = main()
     if result is not None:
-        print(result)
+        logger.info("Finální triage výsledek:\n%s", result)

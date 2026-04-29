@@ -34,7 +34,8 @@ def fetch_feed(feed_source: Source) -> tuple[bytes, int | None, str | None]:
             response.headers.get("Content-Type"),
         )
     except requests.RequestException as exc:
-        raise RuntimeError(f"Failed to fetch RSS feed {feed_source.url}: {exc}") from exc
+        msg = f"Failed to fetch RSS feed {feed_source.url}: {exc}"
+        raise RuntimeError(msg) from exc
 
 
 def parse_pubdate(value: str | None) -> datetime | None:
@@ -71,24 +72,16 @@ def parse_rss_feed(feed_source: Source) -> list[NewsItem]:
         )
 
     entries = feed.get("entries", [])
-    news_items: list[NewsItem] = []
-    for entry in entries:
-        news_items.append(
-            NewsItem(
-                source=feed_source.name,
-                title=entry.get("title", ""),
-                link=entry.get("link", ""),
-                published_at=parse_pubdate(entry.get("published")),
-                description=entry.get("summary", ""),
-                always_relevant=feed_source.always_relevant,
-            )
+    news_items: list[NewsItem] = [
+        NewsItem(
+            source=feed_source.name,
+            title=entry.get("title", ""),
+            link=entry.get("link", ""),
+            published_at=parse_pubdate(entry.get("published")),
+            description=entry.get("summary", ""),
+            always_relevant=feed_source.always_relevant,
         )
+        for entry in entries
+    ]
 
     return news_items
-
-
-if __name__ == "__main__":
-    source = Source(name="České noviny - ČR", url="https://www.ceskenoviny.cz/sluzby/rss/cr.php")
-    parsed_news_items = parse_rss_feed(source)
-
-    print(parsed_news_items)

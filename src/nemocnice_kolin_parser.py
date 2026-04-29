@@ -1,7 +1,6 @@
 """Parser for Nemocnice Kolin document overview page."""
 
 import html
-import importlib
 import logging
 import re
 from datetime import datetime
@@ -9,13 +8,7 @@ from urllib.parse import urljoin
 
 import requests
 
-try:
-    from src.schemas import NewsItem, Source
-except ModuleNotFoundError:  # Allows `uv run src/nemocnice_kolin_parser.py`
-    schemas = importlib.import_module("schemas")
-    NewsItem = schemas.NewsItem
-    Source = schemas.Source
-
+from src.schemas import NewsItem, Source
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +17,7 @@ USER_AGENT = (
 )
 DETAIL_TIMEOUT = 20
 DETAIL_MAX_CHARS = 700
+MIN_PARAGRAPH_LENGTH = 20
 
 
 def fetch_documents_page(feed_source: Source) -> tuple[str, int | None, str | None]:
@@ -40,9 +34,8 @@ def fetch_documents_page(feed_source: Source) -> tuple[str, int | None, str | No
         response.raise_for_status()
         return response.text, response.status_code, response.headers.get("Content-Type")
     except requests.RequestException as exc:
-        raise RuntimeError(
-            f"Failed to fetch Nemocnice Kolin page {feed_source.url}: {exc}"
-        ) from exc
+        msg = f"Failed to fetch Nemocnice Kolin page {feed_source.url}: {exc}"
+        raise RuntimeError(msg) from exc
 
 
 def normalize_text(value: str) -> str:
@@ -60,7 +53,7 @@ def parse_embedded_date(text: str) -> datetime | None:
 
     day, month, year = match.groups()
     try:
-        return datetime(int(year), int(month), int(day))
+        return datetime(int(year), int(month), int(day))  # noqa: DTZ001
     except ValueError:
         return None
 
@@ -77,10 +70,11 @@ def fetch_detail_page(url: str, session: requests.Session) -> str:
             timeout=DETAIL_TIMEOUT,
         )
         response.raise_for_status()
-        return response.text
     except requests.RequestException as exc:
         logger.warning("Failed to fetch detail page %s: %s", url, exc)
         return ""
+    else:
+        return response.text
 
 
 def trim_description(text: str) -> str:
@@ -140,7 +134,7 @@ def extract_detail_description(detail_html: str) -> str:
         r"<p[^>]*>(?P<text>.*?)</p>", editor_html, flags=re.IGNORECASE | re.DOTALL
     ):
         text = normalize_text(paragraph.group("text"))
-        if text and len(text) > 20 and not looks_like_navigation(text):
+        if text and len(text) > MIN_PARAGRAPH_LENGTH and not looks_like_navigation(text):
             return trim_description(text)
 
     # Last fallback: HTML metadata description.
@@ -163,7 +157,7 @@ def parse_nemocnice_kolin_page(feed_source: Source) -> list[NewsItem]:
 
     # Each item is represented by a content link ending with /d-<id>.
     item_pattern = re.compile(
-        r'<a[^>]+href="(?P<href>[^"]*/d-\d+[^"]*)"[^>]*>(?P<title>.*?)</a>(?P<tail>.*?)(?=<a[^>]+href="[^"]*/d-\d+[^"]*"|Zobrazeno je|</main>|$)',
+        r'<a[^>]+href="(?P<href>[^"]*/d-\d+[^"]*)"[^>]*>(?P<title>.*?)</a>(?P<tail>.*?)(?=<a[^>]+href="[^"]*/d-\d+[^"]*"|Zobrazeno je|</main>|$)',  # noqa: E501
         flags=re.IGNORECASE | re.DOTALL,
     )
 
@@ -218,14 +212,3 @@ def parse_nemocnice_kolin_page(feed_source: Source) -> list[NewsItem]:
         )
 
     return news_items
-
-
-if __name__ == "__main__":
-    source = Source(
-        name="Nemocnice Kolín - dokumenty",
-        url="https://www.nemocnicekolin.cz/dp",
-        always_relevant=True,
-    )
-    parsed_news_items = parse_nemocnice_kolin_page(source)
-
-    print(parsed_news_items)

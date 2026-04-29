@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 TELEGRAM_MAX_LENGTH = 4096
 
 
-def send_telegram_alert(message):
+def send_telegram_alert(message: str) -> None:
     """
     Send a message to a Telegram chat using the Bot API.
 
@@ -29,7 +29,6 @@ def send_telegram_alert(message):
     # Split message if it's too long
     messages = _split_message(message)
 
-    responses = []
     for idx, msg in enumerate(messages):
         payload = {
             "chat_id": chat_id,
@@ -46,12 +45,9 @@ def send_telegram_alert(message):
 
         response = requests.post(url, json=payload, timeout=10)
         response.raise_for_status()  # Raise an error for bad responses
-        responses.append(response.json())
-
-    return responses
 
 
-def _split_message(message, max_length=TELEGRAM_MAX_LENGTH):
+def _split_message(message: str, max_length: int = TELEGRAM_MAX_LENGTH) -> list[str]:
     """
     Split a long message into chunks that fit Telegram's limit.
 
@@ -89,7 +85,7 @@ def _split_message(message, max_length=TELEGRAM_MAX_LENGTH):
     return chunks
 
 
-def _split_long_paragraph(text, max_length=TELEGRAM_MAX_LENGTH):
+def _split_long_paragraph(text: str, max_length: int = TELEGRAM_MAX_LENGTH) -> list[str]:
     """Split a paragraph that's too long by breaking at line boundaries."""
     lines = text.split("\n")
     chunks = []
