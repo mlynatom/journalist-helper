@@ -113,19 +113,18 @@ def main() -> str:
         logger.debug("%s", news_item)
 
     if len(relevant_news_items) == 0:
-        triage_result = "Žádné relevantní nebo zprávy nenalezeny."
+        triage_result = "🌴🍻 Žádné relevantní nebo nové zprávy nebyly nalezeny."
         logger.info("Žádné relevantní zprávy nenalezeny, triage přeskočen.")
     else:
         # Perform triage using the LLM
         try:
             triage_result = perform_triage(relevant_news_items)
+            triage_result = prepend_source_statistics(triage_result, relevant_news_items)
             logger.info("Triage completed successfully.")
 
         except RuntimeError as exc:
             logger.exception("Triage failed")
             triage_result = "Triage selhal: " + str(exc)
-
-    triage_result = prepend_source_statistics(triage_result, relevant_news_items)
 
     save_triage_result(triage_result)
     logger.info("Odesílám triage výsledek do Telegramu...")
