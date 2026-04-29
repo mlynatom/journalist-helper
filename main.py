@@ -1,4 +1,5 @@
 """Main entry point for the journalist helper application."""
+from redis.retry import E
 from collections import Counter
 import logging
 import os
@@ -97,6 +98,7 @@ def main():
 
     # Deduplicate news items
     try:
+        raise Exception("Simulovaná chyba deduplikace pro testování fallbacku.")
         relevant_news_items = deduplicate_news_items(relevant_news_items)
         logger.info(" - Po deduplikaci zůstalo %d zpráv.", len(relevant_news_items))
     except Exception as exc:

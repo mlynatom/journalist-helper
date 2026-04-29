@@ -1,4 +1,5 @@
 """Triage news items using LLMs through OpenRouter API."""
+
 import logging
 
 from openrouter import OpenRouter
@@ -8,29 +9,54 @@ from src.schemas import NewsItem
 
 logger = logging.getLogger(__name__)
 
+
 def build_model_prompt(news_items: list[NewsItem]) -> str:
     """Build a prompt for the LLM based on the list of news items."""
     if not news_items:
         return "Žádné novinky ani zprávy k posouzení."
 
-    prompt = "Následující zprávy a důležitá zjištění byly nalezeny ve zdrojích:\n\n"
+    prompt = "Zde jsou nalezené zprávy k analýze:\n\n"
     for idx, news_item in enumerate(news_items, start=1):
-        prompt += f"{idx}. [{news_item.source}] {news_item.title}\n"
+        prompt += f"[{idx}] Titulek: {news_item.title}\n"
+        prompt += f"    Zdroj: {news_item.source}\n"
         if news_item.published_at:
-            prompt += f"   Datum: {news_item.published_at.isoformat()}\n"
+            prompt += f"    Datum: {news_item.published_at.isoformat()}\n"
         if news_item.link:
-            prompt += f"   Odkaz: {news_item.link}\n"
+            prompt += f"    Odkaz: {news_item.link}\n"
         if news_item.description:
-            prompt += f"   Popis: {news_item.description}\n"
+            prompt += f"    Popis: {news_item.description}\n"
         prompt += "\n"
 
-    prompt += """Posuďte, které z těchto zpráv, událostí nebo incidentů jsou relevantní pro okres Kolín a proč. U každé relevantní zprávy uveďte stručné shrnutí a důvod relevance. Pokud žádná položka není relevantní, vysvětlete proč.
-    Pro každý také uveďte odkaz na původní zdroj a datum publikace. Buďte struční a konkrétní, zaměřte se na klíčové informace. Pište česky.
-    
-    Položky by měly být seřazeny podle důležitosti, předpokládané čtenosti a relevance pro místní publikum. Vyhodnoťte, o čem je důležité informovat čtenáře v Kolíně a co by pro ně mohlo být nejzajímavější. Pokud je položka pouze okrajově relevantní, uveď to. Pokud je zpráva mimořádně důležitá nebo neobvyklá, uveď ji na první místo.
+    prompt += """
+Proveď triage těchto zpráv pro novináře z okresu Kolín. Tvým hlavním úkolem je VYHODNOTIT NOVINÁŘSKÝ POTENCIÁL – tedy zjistit, ze kterých zpráv by byl nejlepší, nejčtenější a nejdůležitější článek pro místní obyvatele.
 
-    V odpovědích používej i tučné zvýraznění a emoji, aby bylo jasné, které informace jsou klíčové. Uveď všechny zprávy, žádné nevynechávej, ale jasně označuj, které jsou nejdůležitější. Pokud je zpráva relevantní, ale není zcela jasné, proč, uveď to a navrhni možné důvody relevance. Pokud je zpráva zcela nerelevantní, vysvětli proč. Zaměř se na to, co by mohlo být důležité pro místní komunitu v Kolíně, a nezapomeň zohlednit i širší kontext, například pokud se jedná o událost, která by mohla mít dopad na dopravu, bezpečnost nebo jiné aspekty života v Kolíně. Buď co nejkonkrétnější a nejstručnější, ale zároveň poskytni dostatek informací pro pochopení důležitosti každé zprávy.
-    """
+**PRAVIDLA PRO ROZDĚLENÍ A ŘAZENÍ (Použij tyto 3 nadpisy):**
+
+1. 🔥 **HLAVNÍ TÉMATA K ZPRACOVÁNÍ**
+   - Zde zařaď 1 až 3 absolutně nejdůležitější události z okresu Kolín (závažné nehody, důležitá rozhodnutí města, významné kauzy, velké investice, dopady na běžný život).
+   - To jsou zprávy, které si zaslouží přednostní sepsání do vlastního plnohodnotného článku. 
+   - Seřaď je od té s absolutně nejvyšším potenciálem.
+
+2. 📌 **DALŠÍ RELEVANTNÍ ZPRÁVY**
+   - Zprávy z okresu Kolín, které jsou relevantní, ale mají menší dopad (běžné tiskové zprávy, drobnější krimi, lokální akce, zajímavosti).
+   - Vhodné spíše pro krátkou zmínku nebo denní svodku.
+
+3. ⚠️ **MIMO OKRES KOLÍN (Možná chyba)**
+   - Zprávy, které se reálně netýkají Kolína a okolí, nebo jsou zcela irelevantní.
+
+**POŽADOVANÁ STRUKTURA PRO KAŽDOU ZPRÁVU:**
+Použij striktně tento formát pro každou jednu zprávu. Zvýrazňuj tučně přesně podle vzoru.
+
+[Emoji podle typu] **[Titulek zprávy]**
+📍 **Kde:** [Konkrétní místo, město nebo obec]
+⏰ **Kdy:** [Zformátované datum]
+❓ **O co jde:** [Stručně v jedné větě: Co se stalo faktuálně.]
+💡 **Proč napsat článek:** [V jedné větě navrhni novinářský úhel. Proč to lidi bude zajímat? Jaký to má dopad? U sekce "Mimo okres" sem naopak napiš důvod vyřazení.]
+🔗 **Zdroj:** [[Název zdroje]]({Odkaz})
+
+---
+Vygeneruj finální zprávu pro Telegram podle těchto pravidel. Pamatuj na maximální stručnost, aby se text pohodlně četl na mobilu.
+"""
     return prompt
 
 
@@ -46,15 +72,17 @@ def perform_triage(news_items: list[NewsItem]) -> str:
             response: ChatResult = client.chat.send(
                 model=DEFAULT_MODEL,
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant who is a professional journalist that helps triage news and important updates. Your answers should be maximum 4096 characters long."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "You are an expert news editor and journalist assistant. Your task is to triage and summarize local news for a journalist focusing on the Kolín district (okres Kolín, Czech Republic). Your output will be sent directly as a Telegram message. Therefore, it MUST be strictly structured, highly readable on mobile, use appropriate emojis, and strictly formatted using Telegram-compatible Markdown. Never exceed 4000 characters. Always output in Czech.",
+                    },
+                    {"role": "user", "content": prompt},
                 ],
                 temperature=0.2,
             )
     except Exception as exc:  # pragma: no cover - defensive runtime guard
         logger.error("OpenRouter triage failed: %s", exc)
         raise RuntimeError(f"OpenRouter triage failed: {exc}") from exc
-
 
     content = response.choices[0].message.content
 
