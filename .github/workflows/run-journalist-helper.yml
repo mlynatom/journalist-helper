@@ -35,6 +35,7 @@ jobs:
           TRIAGE_OUTPUT_FILE: triage_result.txt
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           USER_ID: ${{ secrets.USER_ID }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
         shell: bash
         run: |
           uv run python main.py
