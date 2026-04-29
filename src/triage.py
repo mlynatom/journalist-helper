@@ -1,18 +1,12 @@
 """Triage news items using LLMs through OpenRouter API."""
 import logging
-import os
 
-from dotenv import load_dotenv
 from openrouter import OpenRouter
 from openrouter.components import ChatResult
-from src.config import DEFAULT_MODEL
+from src.config import DEFAULT_MODEL, settings
 from src.schemas import NewsItem
 
 logger = logging.getLogger(__name__)
-
-load_dotenv()
- 
-api_key = os.getenv("OPENROUTER_API_KEY")
 
 def build_model_prompt(news_items: list[NewsItem]) -> str:
     """Build a prompt for the LLM based on the list of news items."""
@@ -43,12 +37,12 @@ def build_model_prompt(news_items: list[NewsItem]) -> str:
 def perform_triage(news_items: list[NewsItem]) -> str:
     """Perform triage using the OpenRouter API."""
     prompt = build_model_prompt(news_items)
-    if not api_key:
+    if not settings.openrouter_api_key:
         logger.warning("OPENROUTER_API_KEY is not set, skipping OpenRouter triage.")
         raise RuntimeError("OPENROUTER_API_KEY is not set")
 
     try:
-        with OpenRouter(api_key=api_key) as client:
+        with OpenRouter(api_key=settings.openrouter_api_key) as client:
             response: ChatResult = client.chat.send(
                 model=DEFAULT_MODEL,
                 messages=[

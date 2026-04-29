@@ -1,13 +1,11 @@
 """Telegram alerting module for journalist-helper."""
 
 import requests
-import os
-from dotenv import load_dotenv
 import logging
 
-logger = logging.getLogger(__name__)
+from src.config import settings
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
 # Telegram's message length limit
 TELEGRAM_MAX_LENGTH = 4096
@@ -22,8 +20,8 @@ def send_telegram_alert(message):
     Uses MarkdownV2 parse mode to support LLM-generated Markdown formatting
     (bold **text**, tables, code blocks, etc.).
     """
-    token = os.getenv("BOT_TOKEN")
-    chat_id = os.getenv("USER_ID")
+    token = settings.bot_token
+    chat_id = settings.user_id
     url = f"https://api.telegram.org/bot{token}/sendMessage"
 
     # Split message if it's too long

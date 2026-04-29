@@ -1,23 +1,19 @@
 """Redis DB deduplication logic."""
 
 import redis
-import os
-from dotenv import load_dotenv
 import logging
 
+from src.config import settings
 from src.schemas import NewsItem
-
-load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 def deduplicate_news_items(news_items: list[NewsItem]) -> list[NewsItem]:
     """Deduplicate news items using Redis."""
-    redis_url = os.getenv("REDIS_URL")
-    if not redis_url:
+    if not settings.redis_url:
         raise ValueError("REDIS_URL environment variable is not set.")
 
-    r = redis.Redis.from_url(redis_url)
+    r = redis.Redis.from_url(settings.redis_url)
 
     unique_items: list[NewsItem] = []
 

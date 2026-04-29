@@ -3,10 +3,11 @@ from collections import Counter
 import logging
 import os
 from pathlib import Path
+import unicodedata
 
 import requests
 
-from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES
+from src.config import DEFAULT_FILTER_KEYWORDS, DEFAULT_MODEL, SOURCES, settings
 from src.nemocnice_kolin_parser import parse_nemocnice_kolin_page
 from src.nehody_uzavirky_parser import parse_nehody_uzavirky_page
 from src.rss_parser import parse_rss_feed
@@ -21,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 
 def save_triage_result(triage_result: str) -> None:
     """Persist triage output for downstream automation consumers."""
-    output_path = Path(os.getenv("TRIAGE_OUTPUT_FILE", "triage_result.txt"))
+    output_path = Path(settings.triage_output_file)
     output_path.write_text(triage_result, encoding="utf-8")
 
 
@@ -41,6 +42,12 @@ def prepend_source_statistics(triage_result: str, news_items: list[NewsItem]) ->
     """Add the source statistics block before the triage result."""
     statistics_block = format_source_statistics(news_items)
     return f"{statistics_block}\n\n{triage_result}"
+
+
+def normalize_text(value: str) -> str:
+    """Normalize text for case- and accent-insensitive matching."""
+    normalized = unicodedata.normalize("NFKD", value)
+    return "".join(character for character in normalized if not unicodedata.combining(character)).casefold()
 
 
 def extract_news_items() -> list[NewsItem]:
@@ -67,8 +74,8 @@ def is_related(news_item: NewsItem, keywords: list[str]) -> bool:
     if news_item.always_relevant or not keywords:
         return True
 
-    text = news_item.relevance_text
-    return any(keyword.casefold() in text for keyword in keywords)
+    text = normalize_text(news_item.relevance_text)
+    return any(normalize_text(keyword) in text for keyword in keywords)
 
 
 def main():
