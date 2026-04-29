@@ -13,7 +13,8 @@ from src.rss_parser import parse_rss_feed
 from src.schemas import NewsItem
 from src.telegram import send_telegram_alert
 from src.triage import perform_triage
-
+from src.deduplication import deduplicate_news_items
+    
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -87,12 +88,20 @@ def main():
         len(news_items),
     )
 
+    # Deduplicate news items
+    try:
+        relevant_news_items = deduplicate_news_items(relevant_news_items)
+        logger.info(" - Po deduplikaci zůstalo %d zpráv.", len(relevant_news_items))
+    except Exception as exc:
+        logger.error("Deduplication failed: %s", exc)
+        logger.warning("Pokračuji bez deduplikace.")
+
     # For debugging purposes, print the relevant news items
     for news_item in relevant_news_items:
         logger.debug("%s", news_item)
 
     if len(relevant_news_items) == 0:
-        triage_result = "Žádné relevantní zprávy ani důležitá nová témata nenalezeny."
+        triage_result = "Žádné relevantní nebo zprávy nenalezeny."
         logger.info("Žádné relevantní zprávy nenalezeny, triage přeskočen.")
     else:
         # Perform triage using the LLM

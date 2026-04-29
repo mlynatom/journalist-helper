@@ -9,6 +9,7 @@ dependencies = [
     "openrouter>=0.9.1",
     "pydantic>=2.13.3",
     "python-dotenv>=1.2.2",
+    "redis>=7.4.0",
     "requests>=2.33.1",
     "ruff>=0.15.12",
     "ty>=0.0.32",
