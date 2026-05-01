@@ -34,7 +34,7 @@ Proveď triage těchto zpráv pro novináře z okresu Kolín. Tvým hlavním úk
 **PRAVIDLA PRO ROZDĚLENÍ A ŘAZENÍ (Použij tyto 3 nadpisy):**
 
 1. 🔥 **HLAVNÍ TÉMATA K ZPRACOVÁNÍ**
-   - Zde zařaď 1 až 3 absolutně nejdůležitější události z okresu Kolín (závažné nehody, důležitá rozhodnutí města, významné kauzy, velké investice, dopady na běžný život).
+   - Zde zařaď 1 až 3 absolutně nejdůležitější události z okresu Kolín (závažné nehody, důležitá rozhodnutí měst v okrese, významné kauzy, velké investice, dopady na běžný život).
    - To jsou zprávy, které si zaslouží přednostní sepsání do vlastního plnohodnotného článku.
    - Seřaď je od té s absolutně nejvyšším potenciálem.
 

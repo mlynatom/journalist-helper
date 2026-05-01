@@ -56,6 +56,14 @@ SOURCES: list[Source] = [
         name="HZS Středočeského kraje",
         url="https://hzscr.gov.cz/SCRIPT/rss.aspx?nid=17314",
     ),
+    Source(
+        name="České dráhy - Aktuality",
+        url="https://www.cd.cz/rss/cdaktuality.rss",
+    ),
+    Source(
+        name="České dráhy - Omezení provozu",
+        url="https://www.cd.cz/rss/omezeni.rss",
+    ),
 ]
 
 
