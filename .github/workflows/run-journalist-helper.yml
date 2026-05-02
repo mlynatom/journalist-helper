@@ -3,7 +3,7 @@ name: Run Journalist Helper
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "0 */1 * * *"
 
 permissions:
   contents: read
@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           uv run python main.py
-          
+
       - name: Write run summary from step output
         shell: bash
         run: |

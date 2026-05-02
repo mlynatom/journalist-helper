@@ -19,11 +19,17 @@ def send_telegram_alert(message: str) -> None:
     If the message exceeds Telegram's 4096 character limit, it will be split
     into multiple messages automatically.
 
-    Uses MarkdownV2 parse mode to support LLM-generated Markdown formatting
+    Uses Markdown parse mode to support LLM-generated Markdown formatting
     (bold **text**, tables, code blocks, etc.).
     """
     token = settings.bot_token
     chat_id = settings.user_id
+
+    if not token or not chat_id:
+        msg = "Telegram bot token or user/chat id is not configured"
+        logger.error(msg)
+        raise RuntimeError(msg)
+
     url = f"https://api.telegram.org/bot{token}/sendMessage"
 
     # Split message if it's too long
@@ -43,8 +49,12 @@ def send_telegram_alert(message: str) -> None:
             len(msg),
         )
 
-        response = requests.post(url, json=payload, timeout=10)
-        response.raise_for_status()  # Raise an error for bad responses
+        try:
+            response = requests.post(url, json=payload, timeout=10)
+            response.raise_for_status()
+        except requests.RequestException:
+            logger.exception("Failed to send Telegram message %d/%d", idx + 1, len(messages))
+            raise
 
 
 def _split_message(message: str, max_length: int = TELEGRAM_MAX_LENGTH) -> list[str]:
