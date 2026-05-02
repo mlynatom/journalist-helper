@@ -1,6 +1,7 @@
 """Main entry point for the journalist helper application."""
 
 import logging
+import os
 import unicodedata
 from collections import Counter
 from pathlib import Path
@@ -22,6 +23,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 
 def save_triage_result(triage_result: str) -> None:
     """Persist triage output for downstream automation consumers."""
+    if os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+        logger.info("Běh v Lambda: přeskakuji ukládání triage výstupu do souboru.")
+        return
+
     output_path = Path(settings.triage_output_file)
     output_path.write_text(triage_result, encoding="utf-8")
 

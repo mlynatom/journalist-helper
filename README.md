@@ -45,6 +45,45 @@ Optional environment variables:
 
 The app also reads environment variables from a local `.env` file.
 
+## AWS Lambda (minimal changes)
+
+This repository includes a minimal Lambda wrapper in [lambda_handler.py](lambda_handler.py) that calls the existing `main()` flow and disables file saving during Lambda execution.
+
+Deployment files:
+
+- [template.yaml](template.yaml) (AWS SAM stack with hourly EventBridge trigger)
+- [samconfig.toml](samconfig.toml) (default deploy settings)
+
+### Deploy with AWS SAM
+
+Install AWS SAM CLI, then run:
+
+```bash
+sam validate
+sam build
+sam deploy --guided
+```
+
+When prompted for parameters, provide at least:
+
+- `OpenRouterApiKey`
+- `BotToken` (optional)
+- `UserId` (optional)
+- `RedisUrl` (optional, but recommended for deduplication)
+- `OpenRouterModel` (optional)
+
+After deployment, manually invoke once to verify logs and Telegram delivery:
+
+```bash
+aws lambda invoke \
+  --function-name journalist-helper-JournalistHelperFunction \
+  --payload '{}' \
+  response.json
+cat response.json
+```
+
+Then disable the GitHub Actions schedule in [.github/workflows/run-journalist-helper.yml](.github/workflows/run-journalist-helper.yml) so EventBridge is the only scheduler.
+
 ## Notes
 
 - When `OPENROUTER_API_KEY` is missing, the app still collects and filters sources, then records a failure message instead of stopping entirely.
