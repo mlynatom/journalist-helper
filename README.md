@@ -20,11 +20,12 @@ By default, the app loads this built-in source set:
 - [Uzavírky - Kolín (dlouhodobé)](https://www.nehody-uzavirky.cz/uzavirky-dlouhodobe)
 - [Uzavírky - Kolín (plánované)](https://www.nehody-uzavirky.cz/uzavirky-planovane)
 - [Nemocnice Kolín - Přehled dokumentů](https://www.nemocnicekolin.cz/dp)
-- [Policie České republiky – KŘP Středočeského kraje](https://policie.gov.cz/SCRIPT/rss.aspx?nid=1314)
+- [Policie České republiky - KŘP Středočeského kraje](https://policie.gov.cz/SCRIPT/rss.aspx?nid=1314)
 - [IDNES - Praha a střední Čechy](https://servis.idnes.cz/rss.aspx?c=prahah)
 - [Novinky.cz - Domácí](https://api-web.novinky.cz/v1/timelines/section_5ad5a5fcc25e64000bd6e7ab?xml=rss)
 - [HZS Středočeského kraje](https://hzscr.gov.cz/SCRIPT/rss.aspx?nid=17314)
-
+- [České dráhy - Aktuality](https://www.cd.cz/rss/cdaktuality.rss)
+- [České dráhy - Omezení provozu](https://www.cd.cz/rss/omezeni.rss)
 The app keeps a small default relevance filter of `okres kolín` and `kolín`. Items from local operational sources such as road closures, hospital documents, police updates, and emergency services are treated as always relevant by the code.
 
 ## Output
@@ -44,45 +45,6 @@ Optional environment variables:
 - `TRIAGE_OUTPUT_FILE` changes the file used to persist the triage output.
 
 The app also reads environment variables from a local `.env` file.
-
-## AWS Lambda (minimal changes)
-
-This repository includes a minimal Lambda wrapper in [lambda_handler.py](lambda_handler.py) that calls the existing `main()` flow and disables file saving during Lambda execution.
-
-Deployment files:
-
-- [template.yaml](template.yaml) (AWS SAM stack with hourly EventBridge trigger)
-- [samconfig.toml](samconfig.toml) (default deploy settings)
-
-### Deploy with AWS SAM
-
-Install AWS SAM CLI, then run:
-
-```bash
-sam validate
-sam build
-sam deploy --guided
-```
-
-When prompted for parameters, provide at least:
-
-- `OpenRouterApiKey`
-- `BotToken` (optional)
-- `UserId` (optional)
-- `RedisUrl` (optional, but recommended for deduplication)
-- `OpenRouterModel` (optional)
-
-After deployment, manually invoke once to verify logs and Telegram delivery:
-
-```bash
-aws lambda invoke \
-  --function-name journalist-helper-JournalistHelperFunction \
-  --payload '{}' \
-  response.json
-cat response.json
-```
-
-Then disable the GitHub Actions schedule in [.github/workflows/run-journalist-helper.yml](.github/workflows/run-journalist-helper.yml) so EventBridge is the only scheduler.
 
 ## Notes
 
