@@ -23,9 +23,9 @@ def send_telegram_alert(message: str) -> None:
     (bold **text**, tables, code blocks, etc.).
     """
     token = settings.bot_token
-    chat_id = settings.user_id
+    chat_ids = settings.chat_ids
 
-    if not token or not chat_id:
+    if not token or not chat_ids:
         msg = "Telegram bot token or user/chat id is not configured"
         logger.error(msg)
         raise RuntimeError(msg)
@@ -35,26 +35,37 @@ def send_telegram_alert(message: str) -> None:
     # Split message if it's too long
     messages = _split_message(message)
 
-    for idx, msg in enumerate(messages):
-        payload = {
-            "chat_id": chat_id,
-            "text": msg,
-            "parse_mode": "MARKDOWN",
-        }
+    for chat_idx, chat_id in enumerate(chat_ids):
+        logger.info("Sending Telegram alert to chat %d/%d", chat_idx + 1, len(chat_ids))
 
-        logger.info(
-            "Sending Telegram message %d/%d (length: %d)",
-            idx + 1,
-            len(messages),
-            len(msg),
-        )
+        for msg_idx, msg in enumerate(messages):
+            payload = {
+                "chat_id": chat_id,
+                "text": msg,
+                "parse_mode": "MARKDOWN",
+            }
 
-        try:
-            response = requests.post(url, json=payload, timeout=10)
-            response.raise_for_status()
-        except requests.RequestException:
-            logger.exception("Failed to send Telegram message %d/%d", idx + 1, len(messages))
-            raise
+            logger.info(
+                "Sending Telegram message %d/%d to chat %d/%d (length: %d)",
+                msg_idx + 1,
+                len(messages),
+                chat_idx + 1,
+                len(chat_ids),
+                len(msg),
+            )
+
+            try:
+                response = requests.post(url, json=payload, timeout=10)
+                response.raise_for_status()
+            except requests.RequestException:
+                logger.exception(
+                    "Failed to send Telegram message %d/%d to chat %d/%d",
+                    msg_idx + 1,
+                    len(messages),
+                    chat_idx + 1,
+                    len(chat_ids),
+                )
+                raise
 
 
 def _split_message(message: str, max_length: int = TELEGRAM_MAX_LENGTH) -> list[str]:

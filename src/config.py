@@ -82,6 +82,20 @@ class AppSettings(BaseSettings):
     # Telegram settings
     bot_token: str = Field(default="", description="Telegram bot token for sending alerts.")
     user_id: str = Field(default="", description="Telegram user/chat ID for receiving alerts.")
+    telegram_chat_ids: str = Field(
+        default="",
+        description="Comma-separated Telegram chat IDs for receiving alerts.",
+    )
+
+    @property
+    def chat_ids(self) -> list[str]:
+        """Return configured Telegram chat IDs with USER_ID fallback."""
+        raw_chat_ids = self.telegram_chat_ids or self.user_id
+        if not raw_chat_ids:
+            return []
+
+        normalized = raw_chat_ids.replace("\n", ",")
+        return [chat_id.strip() for chat_id in normalized.split(",") if chat_id.strip()]
 
     # Redis settings
     redis_url: str = Field(
