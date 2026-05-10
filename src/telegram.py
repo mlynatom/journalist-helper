@@ -12,7 +12,12 @@ logger = logging.getLogger(__name__)
 TELEGRAM_MAX_LENGTH = 4096
 
 
-def send_telegram_alert(message: str) -> None:
+def send_telegram_alert(
+    message: str,
+    *,
+    send_to_chat_ids: bool = True,
+    send_to_admin: bool = True,
+) -> None:
     """
     Send a message to a Telegram chat using the Bot API.
 
@@ -23,10 +28,13 @@ def send_telegram_alert(message: str) -> None:
     (bold **text**, tables, code blocks, etc.).
     """
     token = settings.bot_token
-    chat_ids = settings.chat_ids
+    target_chat_ids = _resolve_target_chat_ids(
+        send_to_chat_ids=send_to_chat_ids,
+        send_to_admin=send_to_admin,
+    )
 
-    if not token or not chat_ids:
-        msg = "Telegram bot token or user/chat id is not configured"
+    if not token and not target_chat_ids:
+        msg = "Telegram bot token or target chat id is not configured"
         logger.error(msg)
         raise RuntimeError(msg)
 
@@ -35,8 +43,8 @@ def send_telegram_alert(message: str) -> None:
     # Split message if it's too long
     messages = _split_message(message)
 
-    for chat_idx, chat_id in enumerate(chat_ids):
-        logger.info("Sending Telegram alert to chat %d/%d", chat_idx + 1, len(chat_ids))
+    for chat_idx, chat_id in enumerate(target_chat_ids):
+        logger.info("Sending Telegram alert to chat %d/%d", chat_idx + 1, len(target_chat_ids))
 
         for msg_idx, msg in enumerate(messages):
             payload = {
@@ -50,7 +58,7 @@ def send_telegram_alert(message: str) -> None:
                 msg_idx + 1,
                 len(messages),
                 chat_idx + 1,
-                len(chat_ids),
+                len(target_chat_ids),
                 len(msg),
             )
 
@@ -63,9 +71,22 @@ def send_telegram_alert(message: str) -> None:
                     msg_idx + 1,
                     len(messages),
                     chat_idx + 1,
-                    len(chat_ids),
+                    len(target_chat_ids),
                 )
                 raise
+
+
+def _resolve_target_chat_ids(*, send_to_chat_ids: bool, send_to_admin: bool) -> list[str]:
+    """Build a unique target chat list based on requested delivery mode."""
+    targets: list[str] = []
+
+    if send_to_chat_ids:
+        targets.extend(settings.chat_ids)
+
+    if send_to_admin and settings.admin_chat_id:
+        targets.append(settings.admin_chat_id)
+
+    return list(dict.fromkeys(targets))
 
 
 def _split_message(message: str, max_length: int = TELEGRAM_MAX_LENGTH) -> list[str]:

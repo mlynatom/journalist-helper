@@ -32,9 +32,10 @@ The app keeps a small default relevance filter of `okres kolín` and `kolín`. I
 
 Each run writes the triage result to `triage_result.txt` by default. Set `TRIAGE_OUTPUT_FILE` if you want a different path.
 
-If `BOT_TOKEN` and `TELEGRAM_CHAT_IDS` are set, the same triage output is also sent to Telegram.
-You can provide multiple chat IDs as a comma-separated list. `USER_ID` remains
-supported as a backward-compatible fallback for a single chat.
+If `BOT_TOKEN` is set, Telegram delivery works in two channels:
+
+- `ADMIN_USER_ID` receives status notifications, including runs where no new relevant responses were created.
+- `TELEGRAM_CHAT_IDS` (comma-separated) receives only runs with new relevant content.
 
 ## Configuration
 
@@ -43,8 +44,8 @@ Optional environment variables:
 - `OPENROUTER_API_KEY` required for the OpenRouter triage step.
 - `OPENROUTER_MODEL` overrides the default OpenRouter model.
 - `BOT_TOKEN` enables Telegram alerts.
-- `TELEGRAM_CHAT_IDS` sets one or more Telegram chat/user IDs (comma-separated).
-- `USER_ID` remains supported as a single-ID fallback.
+- `ADMIN_USER_ID` sets the admin Telegram chat/user ID for status notifications.
+- `TELEGRAM_CHAT_IDS` sets one or more Telegram chat/user IDs (comma-separated) for new-content alerts.
 - `TRIAGE_OUTPUT_FILE` changes the file used to persist the triage output.
 
 The app also reads environment variables from a local `.env` file.

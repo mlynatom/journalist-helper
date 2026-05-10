@@ -79,9 +79,14 @@ class AppSettings(BaseSettings):
         description="LLM model to use for triaging (OpenRouter model name).",
     )
 
+    # Gemini API settings
+    gemini_api_key: str = Field(default="", description="API key for Gemini API.")
+
     # Telegram settings
     bot_token: str = Field(default="", description="Telegram bot token for sending alerts.")
-    user_id: str = Field(default="", description="Telegram user/chat ID for receiving alerts.")
+    admin_user_id: str = Field(
+        default="", description="Telegram admin user/chat ID for status alerts."
+    )
     telegram_chat_ids: str = Field(
         default="",
         description="Comma-separated Telegram chat IDs for receiving alerts.",
@@ -89,13 +94,18 @@ class AppSettings(BaseSettings):
 
     @property
     def chat_ids(self) -> list[str]:
-        """Return configured Telegram chat IDs with USER_ID fallback."""
-        raw_chat_ids = self.telegram_chat_ids or self.user_id
+        """Return configured Telegram chat IDs for subscriber delivery."""
+        raw_chat_ids = str(self.telegram_chat_ids or "")
         if not raw_chat_ids:
             return []
 
         normalized = raw_chat_ids.replace("\n", ",")
         return [chat_id.strip() for chat_id in normalized.split(",") if chat_id.strip()]
+
+    @property
+    def admin_chat_id(self) -> str:
+        """Return admin chat ID used for status notifications."""
+        return str(self.admin_user_id or "").strip()
 
     # Redis settings
     redis_url: str = Field(

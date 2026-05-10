@@ -117,7 +117,9 @@ def main() -> str:
     for news_item in relevant_news_items:
         logger.debug("%s", news_item)
 
-    if len(relevant_news_items) == 0:
+    has_new_items = len(relevant_news_items) > 0
+
+    if not has_new_items:
         triage_result = "🌴🍻 Žádné relevantní nebo nové zprávy nebyly nalezeny."
         logger.info("Žádné relevantní zprávy nenalezeny, triage přeskočen.")
     else:
@@ -134,7 +136,11 @@ def main() -> str:
     save_triage_result(triage_result)
     logger.info("Odesílám triage výsledek do Telegramu...")
     try:
-        send_telegram_alert(triage_result)
+        send_telegram_alert(
+            triage_result,
+            send_to_chat_ids=has_new_items,
+            send_to_admin=True,
+        )
         logger.info("Triage výsledek odeslán do Telegramu.")
     except requests.RequestException:
         logger.exception("Failed to send Telegram alert")

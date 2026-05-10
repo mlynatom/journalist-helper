@@ -1,11 +1,9 @@
-"""Triage news items using LLMs through OpenRouter API."""
+"""Triage news items using LLMs through the centralized generation module."""
 
 import logging
 
-from openrouter import OpenRouter
-from openrouter.components import ChatResult
-
-from src.config import DEFAULT_MODEL, settings
+from src.config import settings
+from src.llm_generation import generate
 from src.schemas import NewsItem
 
 logger = logging.getLogger(__name__)
@@ -62,36 +60,28 @@ Vygeneruj finální zprávu pro Telegram podle těchto pravidel. Pamatuj na maxi
 
 
 def perform_triage(news_items: list[NewsItem]) -> str:
-    """Perform triage using the OpenRouter API."""
+    """Perform triage using the LLM generation module."""
     prompt = build_model_prompt(news_items)
-    if not settings.openrouter_api_key:
-        logger.warning("OPENROUTER_API_KEY is not set, skipping OpenRouter triage.")
-        msg = "OPENROUTER_API_KEY is not set"
+    if not settings.openrouter_api_key and not settings.gemini_api_key:
+        logger.warning("Neither GEMINI_API_KEY nor OPENROUTER_API_KEY is set, skipping triage.")
+        msg = "Both API keys are not set"
         raise RuntimeError(msg)
 
-    try:
-        with OpenRouter(api_key=settings.openrouter_api_key) as client:
-            system_prompt = (
-                "You are an expert news editor and journalist assistant. "
-                "Your task is to triage and summarize local news for a journalist "
-                "focusing on the Kolín district (okres Kolín, Czech Republic). "
-                "Your output will be sent directly as a Telegram message. Therefore, "
-                "it MUST be strictly structured, highly readable on mobile, use "
-                "appropriate emojis, and strictly formatted using Telegram-compatible "
-                "Markdown. Never exceed 4000 characters. Always output in Czech."
-            )
+    system_prompt = (
+        "You are an expert news editor and journalist assistant. "
+        "Your task is to triage and summarize local news for a journalist "
+        "focusing on the Kolín district (okres Kolín, Czech Republic). "
+        "Your output will be sent directly as a Telegram message. Therefore, "
+        "it MUST be strictly structured, highly readable on mobile, use "
+        "appropriate emojis, and strictly formatted using Telegram-compatible "
+        "Markdown. Never exceed 4000 characters. Always output in Czech."
+    )
 
-            response: ChatResult = client.chat.send(
-                model=DEFAULT_MODEL,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.2,
-            )
+    try:
+        result = generate(prompt_text=prompt, system_prompt=system_prompt)
     except Exception as exc:  # pragma: no cover - defensive runtime guard
-        logger.exception("OpenRouter triage failed")
-        msg = f"OpenRouter triage failed: {exc}"
+        logger.exception("LLM triage generation failed")
+        msg = f"LLM triage generation failed: {exc}"
         raise RuntimeError(msg) from exc
 
-    return response.choices[0].message.content
+    return result
